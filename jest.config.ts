@@ -11,6 +11,8 @@ const config: Config = {
   coverageDirectory: "coverage",
   coverageProvider: "v8",
   watchman: true,
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.ts']
 };
+
 
 export default createJestConfig(config);

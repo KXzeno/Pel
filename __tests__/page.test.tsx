@@ -13,6 +13,6 @@ describe('Landing page component', () => {
     let testElem = screen.getByRole('group');
     let icons = testElem.querySelectorAll('svg');
 
-    expect(icons.length).toBe(6);
+    expect(icons).toHaveLength(6);
   })
 });

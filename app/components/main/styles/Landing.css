@@ -1,0 +1,10 @@
+@import "tailwindcss";
+
+#main-landing {
+  @apply min-h-screen min-w-full bg-[#FFFFFF] text-[#A64D79];
+
+  @variant dark {
+    @apply min-h-screen min-w-full bg-[#1A1A1D] text-[#A64D79];
+
+  }
+}

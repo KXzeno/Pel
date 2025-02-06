@@ -1,5 +1,3 @@
-import Image from "next/image";
-
 import { Landing } from "@main";
 
 export default function Home() {

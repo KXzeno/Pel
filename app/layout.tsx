@@ -1,6 +1,6 @@
-import type { Metadata, ResolvingMetadata } from 'next';
+import type { Metadata } from 'next';
 import { Urbanist, Inter, Cinzel, Diphylleia, Roboto, Merriweather, Spectral, DM_Sans, Quicksand, Dosis, Sono} from "next/font/google";
-import { cookies } from 'next/headers';
+// import { cookies } from 'next/headers';
 import "./globals.css";
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter', display: 'swap'});

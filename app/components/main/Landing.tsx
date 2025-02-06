@@ -2,8 +2,10 @@ import React from 'react';
 
 import './styles/Landing.css';
 import LandingHeader from '@f/LandingHeader';
+import useObserver from '@hooks/useObserver';
 
 export default function Landing() {
+  console.log(useObserver(null));
   return (
     <div id="main-landing">
       <LandingHeader />

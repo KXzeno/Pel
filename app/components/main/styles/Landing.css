@@ -1,10 +1,26 @@
 @import "tailwindcss";
+@reference "../../../globals.css";
+
+h1 {
+  @apply text-[3.7rem] translate-y-5;
+}
 
 #main-landing {
-  @apply min-h-screen min-w-full bg-[#FFFFFF] text-[#A64D79];
+  @apply relative min-h-screen min-w-full text-[#A64D79] w-[2px] text-[#D39D55];
+}
 
-  @variant dark {
-    @apply min-h-screen min-w-full bg-[#1A1A1D] text-[#A64D79];
+#hero {
+  @apply flex flex-col text-[#FFD95F] font-dosis h-[17rem] w-[33rem] justify-self-center justify-center content-center items-center;
+}
 
-  }
+#hero > h2 {
+  @apply text-[1.17rem] text-[#D39D55] my-3 font-sono;
+}
+
+#main-landing > header > #hero-radial {
+  @apply absolute -z-10 size-128 bg-radial-[at_50%_37%] from-[#574964] via-[#110C1B] to-[#110C1B] to-90% mx-auto left-0 right-0 w-[12rem] top-[-17rem];
+}
+
+#hero > #start-btn {
+  @apply relative bg-[#441752] hover:bg-[#432E54] rounded-full p-2 text-sm px-4 outline-[1.9] outline-solid hover:outline-[#FAB12F];
 }

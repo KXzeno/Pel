@@ -26,6 +26,7 @@
       "@main": ["./components/main/index.ts"],
       "@f/*": ["./components/forward/*"],
       "@main/*": ["./components/main/*"],
+      "@hooks/*": ["./components/hooks/*"],
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],

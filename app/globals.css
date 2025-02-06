@@ -6,7 +6,17 @@
 }
 
 @theme {
-
+  --font-roboto: 'Roboto', sans-serif;
+  --font-inter: 'Inter', sans-serif;
+  --font-urbanist: 'Urbanist', sans-serif;
+  --font-cinzel: 'Cinzel', serif;
+  --font-diphylleia: 'Diphylleia', sans-serif;
+  --font-merriweather: 'Merriweather', serif;
+  --font-spectral: 'Spectral', serif;
+  --font-dm-sans: 'DM Sans', sans-serif;
+  --font-quicksand: 'Quicksand', sans-serif;
+  --font-dosis: 'Dosis', sans-serif;
+  --font-sono: 'Sono', sans-serif;
 }
 
 body {

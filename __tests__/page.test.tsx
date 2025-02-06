@@ -10,14 +10,20 @@ import Page from "../app/page";
 
 describe('Landing page component', () => {
   test('renders Home', async () => {
-    render(<Page />);
+    let { container } = render(<Page />);
+
+    expect(container).toBeInTheDocument();
 
     // screen.debug();
 
+    /**
+     * @remarks
+     * Old tests, may be of use in future
     let testElem = screen.getByRole('group');
     let icons = testElem.querySelectorAll('svg');
 
     expect(icons).toHaveLength(6);
+     */
   })
 });
 

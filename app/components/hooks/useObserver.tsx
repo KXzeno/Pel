@@ -92,7 +92,7 @@ export default function useObserver<T extends HTMLElement | null = HTMLDivElemen
     return () => {
       observer.disconnect();
     };
-  }, [observerState, ref]);
+  }, [ref]);
 
   return [observerState, observedRef];
 }

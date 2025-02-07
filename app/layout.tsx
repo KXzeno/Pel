@@ -70,14 +70,14 @@ const sono = Sono({
 
 export const metadata: Metadata = {
   title: {
-    default: 'Karnovah',
-    template: '%s | Karnovah'
+    default: 'Pel',
+    template: '%s | Pel'
   },
   openGraph: {
-    url: 'https://blog.karnovah.com',
+    url: 'https://pel.karnovah.com',
     type: 'website',
-    title: 'Karnovah',
-    description: 'My blogsite', 
+    title: 'Pel',
+    description: 'Digital Field note-taker', 
   },
 };
 

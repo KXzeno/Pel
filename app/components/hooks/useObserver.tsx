@@ -1,19 +1,39 @@
 import React from 'react';
 
+type ReducerState = {
+  evoked: boolean;
+}
+
+type ReducerAction = {
+  type: "crossed";
+  action?: {
+    fn?: () => boolean;
+  }
+}
+
+function reducer(state: ReducerState, action: ReducerAction): ReducerState {
+  switch (action.type) {
+    case 'crossed': return { ...state, evoked: !state.evoked };
+  }
+}
+
 /**
  * Observer-based hook to invoke a callback once an element is viewed; use only
  * if scroll based features do not seem practical
  *
  * @typeParam T - Type of DOM element
- * @param elem - Element to track by observer
+ * @param ref - Element to track by observer
  */
-export default function useObserver<T extends HTMLElement = HTMLDivElement>(elem: T) {
+export default function useObserver<T extends HTMLElement | null = HTMLDivElement>(ref?: React.RefObject<T>)
+: [ReducerState, React.RefObject<null>]{
+  let [observerState, dispatch] = React.useReducer<ReducerState, [ReducerAction]>(reducer, { evoked: false });
+  let observedRef = React.useRef(null);
 
   // Statically type margin option as template literal
   type ObserverRootMargin = `${number}px`;
 
   // Statically type root as HTMLElement and its subtypes, default to arg type
-  type ObserverRoot<T extends HTMLElement = typeof elem> = T | Document;
+  type ObserverRoot<T extends HTMLElement | null = typeof observedRef['current']> = T | Document;
 
   /** @remarks
    * Defines a range type via recursion and index accessors
@@ -45,10 +65,34 @@ export default function useObserver<T extends HTMLElement = HTMLDivElement>(elem
 
   // Initialize options
   let options: ObserverOptions = {
-    root: elem,
-    rootMargin: "2px",
+    root: null,
+    rootMargin: "0px",
     threshold: 1,
   }
 
-  // const observer = new IntersectionObserver(() => null, options);
+  function observerFn(entries: IntersectionObserverEntry[], observer: IntersectionObserver) {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        dispatch({ type: 'crossed' });
+      }
+    });
+  }
+
+  React.useEffect(() => {
+    // Cease operation on invalid ref 
+    if (observedRef.current === null) {
+      return;
+    }
+
+    // Initialize observer
+    const observer = new IntersectionObserver(observerFn, options);
+    observer.observe(observedRef.current);
+
+    // Handle cleanup between renders
+    return () => {
+      observer.disconnect();
+    };
+  }, [observerState, ref]);
+
+  return [observerState, observedRef];
 }

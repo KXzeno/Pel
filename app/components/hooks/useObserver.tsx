@@ -1,24 +1,18 @@
 import React from 'react';
 
-/** @remarks
- * Arithmetic expressions cannot be performed in type definitions,
- * which shouldn't anyway. The quirky nature of the stepper type above 
- * is that it uses the field 'length' to step. To automate decimal union 
- * types, we will create a cocnrete stepper function and access it's types */
-export function createNumberedArray(start: number, end: number, step: number = 1): Array<number> {
-  let arr = [start];
-  while (arr[arr.length - 1] < end) {
-    // Ensure .1 incrementation by pre/post mapping with multiple of 10
-    let val = (arr[arr.length - 1] * 10 + step * 10) / 10;
-    arr.push(val);
-  }
-  return arr;
-};
-
+/**
+ * Observer-based hook to invoke a callback once an element is viewed; use only
+ * if scroll based features do not seem practical
+ *
+ * @typeParam T - Type of DOM element
+ * @param elem - Element to track by observer
+ */
 export default function useObserver<T extends HTMLElement = HTMLDivElement>(elem: T) {
 
+  // Statically type margin option as template literal
   type ObserverRootMargin = `${number}px`;
 
+  // Statically type root as HTMLElement and its subtypes, default to arg type
   type ObserverRoot<T extends HTMLElement = typeof elem> = T | Document;
 
   /** @remarks
@@ -31,24 +25,30 @@ export default function useObserver<T extends HTMLElement = HTMLDivElement>(elem
    *
    * With love to Java's strict typing, this foreign complexity
    * of flexible typing is a delightful reprieve, however it cannot
-   * handle decimal stepping, thus requiring the external function
-   * */
-  type CreateRange<Max extends number, Range extends Array<number> = []> = Range['length'] extends Max ? Range[number] : CreateRange<Max, [...Range, Range['length']]>;
+   * gracefully handle decimal stepping thus requiring conditional
+   * typing */
+  type CreateRange<Max extends number, Range extends Array<unknown> = []> = Range['length'] extends Max ? Range[number] : CreateRange<Max, [...Range, Range['length']]>;
 
-  type ObserverThreshold = CreateRange<2>;
+  // Initialize range
+  type ObserverThresholdStrings = Exclude<`0.${CreateRange<10>}`, "0.0"> | "1";
 
+  // Unlike with Array<infer Item> which does content type inference, this checks
+  // an existing string and infers the types before evaluated to the string
+  type ObserverThreshold = ObserverThresholdStrings extends `${infer Num extends number}` ? Num : never;
+
+  // Statically type options for observer
   type ObserverOptions = {
     root: ObserverRoot;
     rootMargin: ObserverRootMargin;
     threshold: ObserverThreshold;
   }
 
+  // Initialize options
   let options: ObserverOptions = {
     root: elem,
     rootMargin: "2px",
     threshold: 1,
   }
 
-  const observer = new IntersectionObserver(() => null, options);
+  // const observer = new IntersectionObserver(() => null, options);
 }
-

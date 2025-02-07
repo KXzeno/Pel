@@ -27,6 +27,7 @@
       "@f/*": ["./components/forward/*"],
       "@main/*": ["./components/main/*"],
       "@hooks/*": ["./components/hooks/*"],
+      "@utils/*": ["./utils/*"],
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],

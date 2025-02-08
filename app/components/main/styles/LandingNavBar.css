@@ -1,8 +1,9 @@
 @import "tailwindcss";
 @import "./theme.css";
+@reference "../../../globals.css";
 
 #main-nav {
-  @apply absolute flex flex-col content-center items-center text-center text-green-300 h-16 w-full;
+  @apply absolute fixed flex flex-col content-center items-center text-center text-[#FFD95F] font-diphylleia h-16 w-full;
 }
 
 #nav-ctr {
@@ -21,10 +22,17 @@
   @apply relative w-16;
 }
 
-#nav-ctr > div:nth-of-type(2) {
+#nav-ctr > div:nth-of-type(2):not(.merged) {
   @apply col-span-3 grid grid-cols-subgrid;
 }
 
-#nav-ctr > div:nth-of-type(2) > a#blog-nav-btn {
+#nav-ctr > div:nth-of-type(2):not(.merged) > a#blog-nav-btn {
   @apply col-start-1;
+}
+
+#nav-ctr:has(.nav-item.merged) {
+  @apply grid-cols-4;
+}
+
+.merged {
 }

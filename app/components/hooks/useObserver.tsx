@@ -1,14 +1,14 @@
 import React from 'react';
 
 type ReducerState = {
-  evoked: boolean;
+  evoked: boolean | null;
   payload?: {
     observer?: IntersectionObserver;
   }
 }
 
 type ReducerAction = {
-  type: "crossed";
+  type: "crossedAndSeen" | "crossedAndLeft";
   payload?: {
     observer?: IntersectionObserver;
   }
@@ -16,7 +16,8 @@ type ReducerAction = {
 
 function reducer(state: ReducerState, action: ReducerAction): ReducerState {
   switch (action.type) {
-    case 'crossed': return { ...state, evoked: !state.evoked, payload: { observer: action.payload?.observer } };
+    case 'crossedAndSeen': return { ...state, evoked: true, payload: { observer: action.payload?.observer } };
+    case 'crossedAndLeft': return { ...state, evoked: false, payload: { observer: action.payload?.observer } };
   }
 }
 
@@ -27,13 +28,13 @@ function reducer(state: ReducerState, action: ReducerAction): ReducerState {
  * @typeParam T - Type of DOM element
  * @param ref - Element to track by observer
  */
-export default function useObserver<T extends HTMLElement | null = HTMLDivElement>(ref: React.RefObject<T> | null = null)
+export default function useObserver<T extends HTMLElement | null = HTMLHeadingElement>(ref: React.RefObject<T> | null = null)
 : [ReducerState, React.RefObject<T | null>]{
-  const [observerState, dispatch] = React.useReducer<ReducerState, [ReducerAction]>(reducer, { evoked: false });
+  const [observerState, dispatch] = React.useReducer<ReducerState, [ReducerAction]>(reducer, { evoked: null });
   const observedRef = React.useRef(ref as null);
 
   // Statically type margin option as template literal
-  type ObserverRootMargin = `${number}px`;
+  type ObserverRootMargin = `${number}px` | `${number}px ${number}px` | `${number}px ${number}px ${number}px` | `${number}px ${number}px ${number}px ${number}px`;
 
   // Statically type root as HTMLElement and its subtypes, default to arg type
   type ObserverRoot<T extends HTMLElement | null = typeof observedRef['current']> = T | Document;
@@ -53,11 +54,11 @@ export default function useObserver<T extends HTMLElement | null = HTMLDivElemen
   type CreateRange<Max extends number, Range extends Array<unknown> = []> = Range['length'] extends Max ? Range[number] : CreateRange<Max, [...Range, Range['length']]>;
 
   // Initialize range
-  type ObserverThresholdStrings = Exclude<`0.${CreateRange<10>}`, "0.0"> | "1";
+  type ObserverThresholdStrings = Exclude<`0.${CreateRange<10>}`, "0"> | "1";
 
   // Unlike with Array<infer Item> which does content type inference, this checks
   // an existing string and infers the types before evaluated to the string
-  type ObserverThreshold = ObserverThresholdStrings extends `${infer Num extends number}` ? Num : never;
+  type ObserverThreshold = ObserverThresholdStrings extends `${infer Num extends number}` ? Num | Num[] : never;
 
   // Statically type options for observer
   type ObserverOptions = {
@@ -69,19 +70,41 @@ export default function useObserver<T extends HTMLElement | null = HTMLDivElemen
   // Initialize options
   const options: ObserverOptions = {
     root: null,
-    rootMargin: "0px",
-    threshold: 1,
+    rootMargin: "-17px",
+    threshold: [0, 1],
   }
+
+  // Initialize nullish time reference to signal first render
+  let previousDOMHighResTime: number | null = null;
 
   function observerFn(entries: IntersectionObserverEntry[], observer: IntersectionObserver) {
     entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        dispatch({ 
-          type: 'crossed',
-          payload: {
-            observer: observer,
-          }
-        });
+      // Prevent callback from invoking on initial render
+      if (previousDOMHighResTime === null) {
+        previousDOMHighResTime = entry.time;
+        return;
+      }
+      previousDOMHighResTime = entry.time;
+
+      switch (entry.intersectionRatio) {
+        case 0: {
+          dispatch({ 
+            type: 'crossedAndLeft',
+            payload: {
+              observer: observer,
+            }
+          });
+          break;
+        }
+        case 1: {
+          dispatch({ 
+            type: 'crossedAndSeen',
+            payload: {
+              observer: observer,
+            }
+          });
+          break;
+        }
       }
     });
   }

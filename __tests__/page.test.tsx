@@ -9,6 +9,17 @@ import Page from "../app/page";
 // jest.mock(getUserData);
 
 describe('Landing page component', () => {
+  beforeEach(() => {
+    // IntersectionObserver isn't available in test environment
+    const mockIntersectionObserver = jest.fn();
+    mockIntersectionObserver.mockReturnValue({
+      observe: () => null,
+      unobserve: () => null,
+      disconnect: () => null
+    });
+    window.IntersectionObserver = mockIntersectionObserver;
+  });
+
   test('renders Home', async () => {
     let { container } = render(<Page />);
 
@@ -19,10 +30,10 @@ describe('Landing page component', () => {
     /**
      * @remarks
      * Old tests, may be of use in future
-    let testElem = screen.getByRole('group');
-    let icons = testElem.querySelectorAll('svg');
+     let testElem = screen.getByRole('group');
+     let icons = testElem.querySelectorAll('svg');
 
-    expect(icons).toHaveLength(6);
+     expect(icons).toHaveLength(6);
      */
   })
 });

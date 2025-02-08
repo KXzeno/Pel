@@ -14,10 +14,10 @@ export default class StepAccumlator {
   }
 
   public createNumberedArray(start: number, end: number, step: number = 1): Array<number> {
-    let arr = [start];
+    const arr = [start];
     while (arr[arr.length - 1] < end) {
       // Ensure .1 incrementation by pre/post mapping with multiple of 10
-      let val = (arr[arr.length - 1] * 10 + step * 10) / 10;
+      const val = (arr[arr.length - 1] * 10 + step * 10) / 10;
       arr.push(val);
     }
     return arr;

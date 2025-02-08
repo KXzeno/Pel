@@ -27,7 +27,7 @@ function reducer(state: ReducerState, action: ReducerAction): ReducerState {
 export default function useObserver<T extends HTMLElement | null = HTMLDivElement>(ref?: React.RefObject<T>)
 : [ReducerState, React.RefObject<null>]{
   let [observerState, dispatch] = React.useReducer<ReducerState, [ReducerAction]>(reducer, { evoked: false });
-  let observedRef = React.useRef(null);
+  let observedRef = ref ?? React.useRef(null);
 
   // Statically type margin option as template literal
   type ObserverRootMargin = `${number}px`;

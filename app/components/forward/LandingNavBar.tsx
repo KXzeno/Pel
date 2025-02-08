@@ -12,38 +12,48 @@ import '@main/styles/LandingNavBar.css';
  * @typeParam R - Union type of element(s)
  * @param radialOrRadialCollection - A single or collection of radial-representing div elements 
  */
-function toggleRadial<R extends NodeListOf<Element> | Element>(radialOrRadialCollection: R): void {
+function toggleRadial<R extends NodeListOf<Element> | Element>(radialOrRadialCollection: R) {
   /**
    * Event listener callback that removes a selector class post-animation
    *
    * @param event - the event triggered
    */
-  let handleRemoveOnEnd = (event: Event) => {
-    let target = (event.currentTarget as HTMLDivElement); 
+  const handleRemoveOnEnd = (event: Event) => {
+    const target = (event.currentTarget as HTMLDivElement); 
     target.classList.remove('nav-radial-off');
     // Questionable garbage collection
     target.removeEventListener('animationend', handleRemoveOnEnd);
   }
 
-  // IF the function arg is a collection, iterate over it and
-  // remove the fade-out animation
-  radialOrRadialCollection instanceof NodeList ? radialOrRadialCollection.forEach(radial => {
-    radial.addEventListener('animationend', handleRemoveOnEnd);
-    radial.classList.toggle('nav-radial-off', true);
+   /** 
+    * IF the function arg is a collection, iterate over it and
+    * remove the fade-out animation
+    *
+    * @remarks
+    *
+    * IIFEs invoked by the unary operator returns 0 | 1 depending
+    * on return type false | true
+    */
+  let invoked: number | null = radialOrRadialCollection instanceof NodeList ? +((collection) => {
+    collection.forEach(radial => {
+      radial.addEventListener('animationend', handleRemoveOnEnd);
+      radial.classList.toggle('nav-radial-off', true);
+    });
+    return true;
     // ELSE if the arg is a single element, invoke an IIFE that
     // parses it's preceding sibling (the radial) and trigger
     // animations with leave/enter logic
-  }) : +((elem) => {
-    let precedingSibling = elem.previousElementSibling;
+  })(radialOrRadialCollection): +((elem) => {
+    const precedingSibling = elem.previousElementSibling;
 
     // Return 'never' if the radial doesn't exist
     // TODO: Manage fallbacks / create error instances
     if (precedingSibling === null) {
-      return;
+      return false;
     }
 
     // Enter/leave logic predicates off the existence of this selector
-    let isEntering = !precedingSibling.classList.contains('nav-radial');
+    const isEntering = !precedingSibling.classList.contains('nav-radial');
 
     if (isEntering) {
       precedingSibling.classList.toggle('nav-radial');
@@ -52,7 +62,14 @@ function toggleRadial<R extends NodeListOf<Element> | Element>(radialOrRadialCol
       precedingSibling.classList.toggle('nav-radial-off');
       precedingSibling.addEventListener('animationend', handleRemoveOnEnd);
     }
+    return true;
   })(radialOrRadialCollection);
+
+  // Cleanup IIFE
+  switch (invoked) {
+    case 0: throw new Error('Radial toggling conflicted, check code for underlying issue.');
+    case 1: invoked = null;
+  }
 }
 
 /**
@@ -71,18 +88,19 @@ function handleRadialActivation(event: PointerEvent<HTMLAnchorElement>) {
  */
 export default function LandingNavBar(): React.ReactNode {
   // Initialize custom hook utilizing intersection observer API
-  let [observed, observedRef] = useObserver();
+  const [observed, observedRef] = useObserver();
 
   React.useEffect(() => {
     // On mount, remove the radials after their animations
-    let radialCollection = document.querySelectorAll('.nav-radial-off');
+    const radialCollection = document.querySelectorAll('.nav-radial-off');
     toggleRadial(radialCollection);
 
     if (observedRef.current !== null) {
       // TODO: Add collapse and merge/repel design when the navbar is out of screen
+      // Make absolute first, it shouldn't get out of vision
       console.log('-----------------------------------');
     }
-  }, [observed]);
+  }, [observed, observedRef]);
 
   return (
     <>

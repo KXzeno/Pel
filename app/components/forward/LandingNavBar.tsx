@@ -3,7 +3,6 @@
 import React, { PointerEvent } from 'react';
 import Link from 'next/link';
 
-import useObserver from '@hooks/useObserver';
 import '@main/styles/LandingNavBar.css';
 
 /** 
@@ -87,25 +86,15 @@ function handleRadialActivation(event: PointerEvent<HTMLAnchorElement>) {
  * @returns a react node accessed by ancestor RFC 'Landing.tsx'
  */
 export default function LandingNavBar(): React.ReactNode {
-  // Initialize custom hook utilizing intersection observer API
-  const [observed, observedRef] = useObserver();
-
   React.useEffect(() => {
     // On mount, remove the radials after their animations
     const radialCollection = document.querySelectorAll('.nav-radial-off');
     toggleRadial(radialCollection);
-
-    if (observedRef.current !== null) {
-      // TODO: Add collapse and merge/repel design when the navbar is out of screen
-      // Make absolute first, it shouldn't get out of vision
-      console.log('-----------------------------------');
-    }
-  }, [observed, observedRef]);
+  }, []);
 
   return (
     <>
       <nav 
-        ref={observedRef}
         id="main-nav" 
         className='text-white'
       >

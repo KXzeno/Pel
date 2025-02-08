@@ -2,12 +2,16 @@
 @import "./theme.css";
 @reference "../../../globals.css";
 
+* {
+  @apply z-0;
+}
+
 h1 {
   @apply text-[3.7rem] translate-y-5;
 }
 
 #main-landing {
-  @apply relative min-h-screen min-w-full text-[#A64D79] w-[2px] text-[#D39D55];
+  @apply relative min-h-screen min-w-full text-[#A64D79] w-[2px] text-[#D39D55] z-0;
 }
 
 #hero {

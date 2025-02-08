@@ -2,18 +2,21 @@ import React from 'react';
 
 type ReducerState = {
   evoked: boolean;
+  payload?: {
+    observer?: IntersectionObserver;
+  }
 }
 
 type ReducerAction = {
   type: "crossed";
-  action?: {
-    fn?: () => boolean;
+  payload?: {
+    observer?: IntersectionObserver;
   }
 }
 
 function reducer(state: ReducerState, action: ReducerAction): ReducerState {
   switch (action.type) {
-    case 'crossed': return { ...state, evoked: !state.evoked };
+    case 'crossed': return { ...state, evoked: !state.evoked, payload: { observer: action.payload?.observer } };
   }
 }
 
@@ -24,10 +27,10 @@ function reducer(state: ReducerState, action: ReducerAction): ReducerState {
  * @typeParam T - Type of DOM element
  * @param ref - Element to track by observer
  */
-export default function useObserver<T extends HTMLElement | null = HTMLDivElement>(ref?: React.RefObject<T>)
-: [ReducerState, React.RefObject<null>]{
-  let [observerState, dispatch] = React.useReducer<ReducerState, [ReducerAction]>(reducer, { evoked: false });
-  let observedRef = ref ?? React.useRef(null);
+export default function useObserver<T extends HTMLElement | null = HTMLDivElement>(ref: React.RefObject<T> | null = null)
+: [ReducerState, React.RefObject<T | null>]{
+  const [observerState, dispatch] = React.useReducer<ReducerState, [ReducerAction]>(reducer, { evoked: false });
+  const observedRef = React.useRef(ref as null);
 
   // Statically type margin option as template literal
   type ObserverRootMargin = `${number}px`;
@@ -64,7 +67,7 @@ export default function useObserver<T extends HTMLElement | null = HTMLDivElemen
   }
 
   // Initialize options
-  let options: ObserverOptions = {
+  const options: ObserverOptions = {
     root: null,
     rootMargin: "0px",
     threshold: 1,
@@ -73,7 +76,12 @@ export default function useObserver<T extends HTMLElement | null = HTMLDivElemen
   function observerFn(entries: IntersectionObserverEntry[], observer: IntersectionObserver) {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
-        dispatch({ type: 'crossed' });
+        dispatch({ 
+          type: 'crossed',
+          payload: {
+            observer: observer,
+          }
+        });
       }
     });
   }

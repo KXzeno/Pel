@@ -10,7 +10,7 @@ export default function LandingHeader() {
 
   React.useEffect(() => {
     // Extract relevant data
-    const  [{ evoked }, payload]  = [observed, observedRef]
+    const [{ evoked },]  = [observed, observedRef]
 
     // Terminate on initial observation
     if (evoked === null) {
@@ -46,7 +46,7 @@ export default function LandingHeader() {
           navItem.classList.remove(match.input);
           if (navItem === rightHalf[1]) {
             // Parse index to get merge direction from animation name
-            let mergeDirectionMatchIndex: number = match.input.search(/(left|right)$/);
+            const mergeDirectionMatchIndex: number = match.input.search(/(left|right)$/);
             const mergeDirection: string = match.input.substring(mergeDirectionMatchIndex);
 
             switch (mergeDirection) {

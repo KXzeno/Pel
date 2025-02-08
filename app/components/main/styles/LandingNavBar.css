@@ -35,4 +35,13 @@
 }
 
 .merged {
+
+}
+
+@utility nav-item-merged-from-left {
+  @apply animate-merge-navbar-left;
+}
+
+@utility nav-item-merged-from-right {
+  @apply animate-merge-navbar-right;
 }

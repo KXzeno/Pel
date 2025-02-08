@@ -59,6 +59,6 @@ describe("A dynamic observer intersection hook", () => {
     // Validate react ref object
     expect(ref).toBeDefined();
     // Validate rendered DOM node and React node equality
-    expect(ref.current).toEqual(target);
+    expect(ref.current).toEqual({ current: target });
   });
 });

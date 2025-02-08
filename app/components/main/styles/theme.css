@@ -40,14 +40,14 @@
   --animate-merge-navbar-left: merge-navbar-left 0.7s cubic-bezier(0.7, 0.2, 0, 1); 
   @keyframes merge-navbar-left {
     to {
-      transform: translate(100px);
+      transform: translate(72px);
     }
   }
 
   --animate-merge-navbar-right: merge-navbar-right 0.7s cubic-bezier(0.7, 0.2, 0, 1); 
   @keyframes merge-navbar-right {
     to {
-      transform: translate(-100px);
+      transform: translate(-72px);
     }
   }
 }

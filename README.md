@@ -12,3 +12,4 @@
 6. Design algorithm for which nodes/timelines to notify the user of "worthy", immediate retrospection
 7. Implement cookie/session-based caching for guests
 8. Implement auth.js for database integration, allowing full features; follows a whitelist unless database options expand
+9. Produce external data encryption in case of data leaks

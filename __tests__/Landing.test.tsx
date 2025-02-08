@@ -3,10 +3,11 @@ import { render, screen } from "@testing-library/react";
 import userEvent from '@testing-library/user-event';
 
 import Landing from "@main/Landing";
+import { LandingNavBar, LandingHeader } from "@/components/forward";
 
 describe('Landing component', () => {
   test('renders header section', async () => {
-    let { container } = render(<Landing />);
+    let { container } = render(<LandingHeader />);
 
     expect(container).toBeInTheDocument();
 

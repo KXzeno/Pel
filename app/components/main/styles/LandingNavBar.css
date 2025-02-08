@@ -1,0 +1,30 @@
+@import "tailwindcss";
+@import "./theme.css";
+
+#main-nav {
+  @apply absolute flex flex-col content-center items-center text-center text-green-300 h-16 w-full;
+}
+
+#nav-ctr {
+  @apply absolute grid grid-cols-6 gap-x-2 translate-y-3;
+}
+
+.nav-radial {
+  @apply absolute -z-5 w-16 h-32 bg-radial-[at_50%_37%] from-[#574964] via-[#110C1B] to-[#110C1B] to-90% -translate-y-16 animate-faster-fade-in-scale;
+}
+
+.nav-radial-off {
+  @apply absolute -z-5 w-16 h-32 bg-radial-[at_50%_37%] from-[#574964] via-[#110C1B] to-[#110C1B] to-90% -translate-y-16 animate-faster-fade-out-scale;
+}
+
+#nav-ctr > .nav-item {
+  @apply relative w-16;
+}
+
+#nav-ctr > div:nth-of-type(2) {
+  @apply col-span-3 grid grid-cols-subgrid;
+}
+
+#nav-ctr > div:nth-of-type(2) > a#blog-nav-btn {
+  @apply col-start-1;
+}

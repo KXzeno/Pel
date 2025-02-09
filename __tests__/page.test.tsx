@@ -10,7 +10,6 @@ import Page from "../app/page";
 
 describe('Landing page component', () => {
   beforeEach(() => {
-    // IntersectionObserver isn't available in test environment
     const mockIntersectionObserver = jest.fn();
     mockIntersectionObserver.mockReturnValue({
       observe: () => null,
@@ -20,7 +19,7 @@ describe('Landing page component', () => {
     window.IntersectionObserver = mockIntersectionObserver;
   });
 
-  test('renders Home', async () => {
+  test('renders Home', () => {
     let { container } = render(<Page />);
 
     expect(container).toBeInTheDocument();

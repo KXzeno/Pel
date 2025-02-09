@@ -37,17 +37,31 @@
     }
   }
 
-  --animate-merge-navbar-left: merge-navbar-left 0.7s cubic-bezier(0.7, 0.2, 0, 1); 
+  --animate-merge-navbar-left: merge-navbar-left 0.3s cubic-bezier(0.7, 0.2, 0, 1); 
   @keyframes merge-navbar-left {
     to {
       transform: translate(72px);
     }
   }
 
-  --animate-merge-navbar-right: merge-navbar-right 0.7s cubic-bezier(0.7, 0.2, 0, 1); 
+  --animate-merge-navbar-right: merge-navbar-right 0.3s cubic-bezier(0.7, 0.2, 0, 1); 
   @keyframes merge-navbar-right {
     to {
       transform: translate(-72px);
+    }
+  }
+
+  --animate-shrink-navbar: shrink-navbar 0.3s cubic-bezier(0.7, 0.2, 0, 1);
+  @keyframes shrink-navbar {
+    to {
+      transform: scaleX(65%);
+    }
+  }
+
+  --animate-grow-navbar: grow-navbar 0.3s cubic-bezier(0.7, 0.2, 0, 1);
+  @keyframes grow-navbar {
+    to {
+      transform: scaleX(150%);
     }
   }
 }

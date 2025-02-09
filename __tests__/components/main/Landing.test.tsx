@@ -1,9 +1,10 @@
 import "@testing-library/jest-dom";
 import { render, screen } from "@testing-library/react";
-import userEvent from '@testing-library/user-event';
+// import userEvent from '@testing-library/user-event';
 
-import Landing from "@main/Landing";
+// import Landing from "@main/Landing";
 import { LandingNavBar, LandingHeader } from "@/components/forward";
+import { CircularQueue } from "@/utils/CircularQueue";
 
 // Mock intersection observer
 const mockIntersectionObserver = jest.fn();
@@ -56,5 +57,54 @@ describe('Landing component', () => {
     let navItemRadials = navItems.map(item => item.previousElementSibling);
 
     expect(navItemRadials.length).toBe(4);
+  });
+});
+
+describe('Utilities for landing component', () => {
+  test('construct a valid circular queue', () => {
+    // Construct a circular queue of numbers
+    const circularNumberQueue = new CircularQueue<number>(0);
+
+    // Orderly enqueue from 1-9
+    while (circularNumberQueue.size() !== 10) {
+      circularNumberQueue.enqueue(circularNumberQueue.size());
+    }
+
+    // Reference the first node
+    const leader = circularNumberQueue.first();
+
+    for (let i = 0; i < circularNumberQueue.size() + 1; i++) {
+      let index = 0;
+      let traverser: ReturnType<CircularQueue<number>['first']> | null = leader;
+      // Traverse the queue until the traverser matches the target node
+      while (index !== i) {
+        index++;
+        // Reference the traverser to the next node
+        traverser = traverser!.next();
+      }
+      // Index and node data are conveniently the same; test values
+      if (i === circularNumberQueue.size()) {
+        // The for-loop iteration count is +1 to test circular behavior
+        expect(traverser!.item).toBe(leader.item);
+        continue;
+      } 
+      expect(traverser!.item).toBe(i);
+    }
+
+    // Likewise, test if the dequeue functions correctly
+    const capacity = circularNumberQueue.size();
+    for (let i = capacity; i >= 0; i--) {
+      if (i === 0) {
+        /**
+         * @see {@link https://jestjs.io/docs/expect#tothrowerror}
+         *
+         * Uncaught exceptions must be wrapped in a function to be testable
+         */
+        expect(() => circularNumberQueue.dequeue()).toThrow('No items to dequeue.');
+        break;
+      }
+      const { item } = circularNumberQueue.dequeue();
+      expect(item).toBe(capacity - i);
+    }
   });
 });

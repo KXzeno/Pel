@@ -60,7 +60,7 @@ class Node<E> {
  *
  * @author Kx
  */
-export class CircularQueue<T> {
+export default class CircularQueue<T> {
   // Initialize priority node
   private leader: Node<T> = new Node();
   
@@ -109,6 +109,19 @@ export class CircularQueue<T> {
   public enqueue(item: T): number {
     // Initialize the node with the given value
     const node = new Node(item);
+
+    /**
+     * Populate the priority node for a argumentless prototype,
+     * this replicates the the constructor logic 
+     *
+     * @privateRemarks
+     * Seems like in TS, not only is there no constructor overloading,
+     * but you cannot self-construct in the class definition.
+     */
+    if (this.sz === 0) {
+      this.leader.mutate(item);
+      return ++this.sz
+    }
 
     // Throws an error if item somehow is null
     if (item === null) {

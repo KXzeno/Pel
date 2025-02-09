@@ -143,6 +143,7 @@ export default function LandingNavBar(): React.ReactNode {
               Discord
             </Link>
           </div>
+          <div id="navbar-bg"/>
         </div>
       </nav>
     </>

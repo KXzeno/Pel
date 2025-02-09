@@ -54,14 +54,14 @@
   --animate-shrink-navbar: shrink-navbar 0.3s cubic-bezier(0.7, 0.2, 0, 1);
   @keyframes shrink-navbar {
     to {
-      transform: scaleX(65%);
+      transform: scaleX(66.0384993%);
     }
   }
 
   --animate-grow-navbar: grow-navbar 0.3s cubic-bezier(0.7, 0.2, 0, 1);
   @keyframes grow-navbar {
     to {
-      transform: scaleX(150%);
+      transform: scaleX(151.426821%);
     }
   }
 }

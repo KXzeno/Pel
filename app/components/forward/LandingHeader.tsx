@@ -29,6 +29,12 @@ export default function LandingHeader() {
     const leftHalf = [navItems.item(0), navItems.item(1)];
     const rightHalf = [navItems.item(2), navItems.item(3)];
 
+    // Reference background
+    const bg = document.querySelector('#navbar-bg');
+    if (bg === null) {
+      throw new Error('Navbar background undetected.');
+    }
+
     // Declare higher scope event listener to assist garbage collection
     function handleClearMergeAnimationOnEnd(event: Event) {
       // Extract element from event target
@@ -50,13 +56,21 @@ export default function LandingHeader() {
             const mergeDirection: string = match.input.substring(mergeDirectionMatchIndex);
 
             switch (mergeDirection) {
+              case 'left': { 
                 // Force selector marker on subgrid to invoke combinator 
                 // effect on primary grid, minimizing the column width
-              case 'left': leftHalf[1].classList.remove('merged'); 
+                leftHalf[1].classList.remove('merged'); 
+                // Remove grow animation
+                bg!.classList.remove('navbar-grow');
                 break;
-                // Revert marker to restore grid styles and to avoid off-setted animation
-              case 'right': leftHalf[1].classList.add('merged');
+              }
+              // Revert marker to restore grid styles and to avoid off-setted animation
+              case 'right': { 
+                leftHalf[1].classList.add('merged'); 
+                // Remove shrink animation
+                bg!.classList.remove('navbar-shrink');
                 break;
+              }
             }
             continue;
           }
@@ -74,6 +88,8 @@ export default function LandingHeader() {
         navItem.classList.add('nav-item-merged-from-right');
         navItem.addEventListener('animationend', handleClearMergeAnimationOnEnd)
       });
+      // Invoke bg shrink animation
+      bg.classList.add('navbar-shrink');
     } else {
       /**
        * Add the merge-in transitions when header is on screen
@@ -91,6 +107,8 @@ export default function LandingHeader() {
         navItem.classList.add('nav-item-merged-from-left');
         navItem.addEventListener('animationend', handleClearMergeAnimationOnEnd)
       });
+      // Invoke bg grow animation
+      bg.classList.add('navbar-grow');
     }
 
     // Handle cleanup

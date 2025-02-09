@@ -49,7 +49,12 @@ describe('Landing component', () => {
     expect(navBarBg).not.toHaveClass('navbar-shrink');
   });
 
-  test.skip('navigation bar merge animations trigger on intersections', () => {
+  test('attaches & detaches radials on links via hover states', async () => {
+    render(<LandingNavBar />);
 
+    let navItems = screen.getAllByRole('link');
+    let navItemRadials = navItems.map(item => item.previousElementSibling);
+
+    expect(navItemRadials.length).toBe(4);
   });
 });

@@ -1,31 +1,41 @@
 import Dispatcher, { type ActiveCollection } from './Dispatcher';
+import CircularQueue from './CircularQueue';
 
-export class CQDispatcher<N> implements Dispatcher<N> {
-  private dispatchQueue: N[];
+export default class CQDispatcher<T, P extends Promise<T>> implements Dispatcher<P> {
+  private dq: CircularQueue<P> = new CircularQueue<P>();
   private sz: number = 0;
 
-  public constructor(startingNode: N) {
-    this.dispatchQueue = [startingNode];
-    this.sz = this.dispatchQueue.length;
+  public constructor(...inputs: P[]) {
+    console.log('hi', inputs.length, inputs);
+    if (inputs) {
+      this.sz = inputs.length;
+      if (inputs.length === 1) {
+        this.dq.enqueue(inputs[0]);
+        return;
+      } 
+      for (let i = 0; i < inputs.length; i++) {
+        this.dq.enqueue(i);
+      }
+    }
   }
 
-  public items(): ActiveCollection<N> {
-    const temp: ActiveCollection<N> = {
-      leader: this.dispatchQueue[0],
-      inactive: this.dispatchQueue,
+  public items(): ActiveCollection<P> {
+    const temp: ActiveCollection<P> = {
+      leader: this.dq[0],
+      inactive: this.dq.filter((_, i) => i !== 0),
     }
     return temp;
   }
 
-  public dispatch(storedNode?: N | undefined): void {
+  public dispatch(storedNode?: P | undefined): void {
     console.log(storedNode);
   }
 
   public capacity(): number {
-    return -1;
+    return this.dq.length;
   }
 
-  public append(node: N): number {
+  public append(evt: P): number {
     return this.sz;
   }
 

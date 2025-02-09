@@ -11,7 +11,7 @@
 }
 
 #nav-ctr > #navbar-bg:last-child {
-  @apply absolute w-[102%] h-full bg-[#3D3D3D]/25 rounded-full translate-x-[-1%] -z-10;
+  @apply absolute w-[102%] h-full bg-[#8174A0]/25 rounded-full translate-x-[-1%] -z-10;
 }
 
 .nav-radial {

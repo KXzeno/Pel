@@ -11,15 +11,15 @@
 }
 
 #nav-ctr > #navbar-bg:last-child {
-  @apply absolute w-[102%] h-full bg-[#3D3D3D]/25 rounded-full translate-x-[-1%];
+  @apply absolute w-[102%] h-full bg-[#3D3D3D]/25 rounded-full translate-x-[-1%] -z-10;
 }
 
 .nav-radial {
-  @apply absolute -z-5 w-16 h-32 bg-radial-[at_50%_37%] from-[#574964] via-[#110C1B] to-[#110C1B] to-90% -translate-y-16 animate-faster-fade-in-scale;
+  @apply bg-transparent absolute -z-5 w-16 h-32 bg-radial-[at_50%_37%] from-[#574964] via-transparent to-transparent to-90% -translate-y-16 animate-faster-fade-in-scale bg-clip-content;
 }
 
 .nav-radial-off {
-  @apply absolute -z-5 w-16 h-32 bg-radial-[at_50%_37%] from-[#574964] via-[#110C1B] to-[#110C1B] to-90% -translate-y-16 animate-faster-fade-out-scale;
+  @apply absolute -z-5 w-16 h-32 bg-radial-[at_50%_37%] from-[#574964] via-transparent to-transparent to-90% -translate-y-16 animate-faster-fade-out-scale bg-clip-content;
 }
 
 #nav-ctr > .nav-item {

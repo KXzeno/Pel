@@ -1,6 +1,6 @@
 export type ActiveCollection<T> = {
-  readonly leader: T;
-  inactive: T[];
+  readonly leader: T | null;
+  inactive: T[] | null;
 }
 
 /**

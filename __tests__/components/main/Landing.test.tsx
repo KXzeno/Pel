@@ -4,7 +4,8 @@ import { render, screen } from "@testing-library/react";
 
 // import Landing from "@main/Landing";
 import { LandingNavBar, LandingHeader } from "@/components/forward";
-import { CircularQueue } from "@/utils/CircularQueue";
+import CircularQueue from "@utils/CircularQueue";
+import CQDispatcher from "@utils/CQDispatcher";
 
 // Mock intersection observer
 const mockIntersectionObserver = jest.fn();
@@ -106,5 +107,34 @@ describe('Utilities for landing component', () => {
       const { item } = circularNumberQueue.dequeue();
       expect(item).toBe(capacity - i);
     }
+  });
+
+  test('construct a valid cq-dispatcher', () => {
+    // Initialize promises to pass as args in dispatcher queue
+    const p1 = new Promise<string>((r,) => { r('1'); });
+    const p2 = new Promise<string>((r,) => { r('2'); });
+    const p3 = new Promise<string>((r,) => { r('3'); });
+
+    // Instantiate a dispatcher queue with the 3 promise args
+    const d1 = new CQDispatcher(p1, p2, p3)
+
+    // Create  object for queue collection conformity
+    const d1c = {
+      leader: p1,
+      inactive: [p2, p3],
+    };
+
+    // Validate queue collection
+    expect(d1.items()).not.toBeNull();
+    expect(d1.items()).toMatchObject(d1c);
+
+    // Instantiate a dispatcher queue with no args
+    const d2 = new CQDispatcher();
+
+    // Validate nullish collection
+    const { leader, inactive } = d2.items();
+
+    expect(leader).toBeNull();
+    expect(inactive).toBeNull();
   });
 });

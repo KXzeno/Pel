@@ -174,7 +174,7 @@ export default class CircularQueue<T> {
    */
   public dequeue(): Node<T> {
     // Throw an error if dequeuing an empty queue
-    if (this.size() === 1 || !this.leader.next()) {
+    if (this.size() <= 1 || !this.leader.next()) {
       // If the leader node contains data, extract the node and terminate
       if (this.leader.item !== null) {
         const data = { ...this.leader } as const;

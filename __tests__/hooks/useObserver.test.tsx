@@ -55,7 +55,7 @@ describe("A dynamic observer intersection hook", () => {
     let [state, ref] = hook2.result.current;
 
     // Validate on-screen (cannot simulate intersection API; always false)
-    expect(state.evoked).toBe(false);
+    expect(state.evoked).toBeNull();
     // Validate react ref object
     expect(ref).toBeDefined();
     // Validate rendered DOM node and React node equality

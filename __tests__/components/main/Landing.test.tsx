@@ -74,15 +74,9 @@ describe('Utilities for landing component', () => {
     // Reference the first node
     const leader = circularNumberQueue.first();
 
+    // Validate number items relative to index
+    let traverser: ReturnType<CircularQueue<number>['first']> | null = leader;
     for (let i = 0; i < circularNumberQueue.size() + 1; i++) {
-      let index = 0;
-      let traverser: ReturnType<CircularQueue<number>['first']> | null = leader;
-      // Traverse the queue until the traverser matches the target node
-      while (index !== i) {
-        index++;
-        // Reference the traverser to the next node
-        traverser = traverser!.next();
-      }
       // Index and node data are conveniently the same; test values
       if (i === circularNumberQueue.size()) {
         // The for-loop iteration count is +1 to test circular behavior
@@ -90,6 +84,9 @@ describe('Utilities for landing component', () => {
         continue;
       } 
       expect(traverser!.item).toBe(i);
+
+      // Reference the traverser to the next node
+      traverser = traverser!.next();
     }
 
     // Likewise, test if the dequeue functions correctly

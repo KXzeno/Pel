@@ -1,12 +1,30 @@
 import Dispatcher, { type ActiveCollection } from './Dispatcher';
 import CircularQueue from './CircularQueue';
 
+/**
+ * A circular-queue implementation of a promise dispatcher
+ *
+ * @typeParam T - Type parameterized within promise argument(s)
+ * @typeParam P - Type of promise to concretely define Dispatcher
+ */
 export default class CQDispatcher<T, P extends Promise<T>> implements Dispatcher<P> {
   private dq: CircularQueue<P> = new CircularQueue<P>();
   private sz: number = 0;
+  private collection: ActiveCollection<P> = { leader: null, inactive: null };
 
+  /**
+   * @param inputs - the passed promise inputs
+   * 
+   * @privateRemarks
+   *
+   * Spreading the arguments seem to force an optional
+   *
+   * The use of spread here reminds me of the JVM command line
+   * string args within the main methods, akin to node's runetime
+   * environment using 'process.argv'
+   */
   public constructor(...inputs: P[]) {
-    console.log('hi', inputs.length, inputs);
+    // Only modify the class queue if inputs are passed
     if (inputs) {
       this.sz = inputs.length;
       if (inputs.length === 1) {
@@ -14,17 +32,46 @@ export default class CQDispatcher<T, P extends Promise<T>> implements Dispatcher
         return;
       } 
       for (let i = 0; i < inputs.length; i++) {
-        this.dq.enqueue(i);
+        this.dq.enqueue(inputs[i]);
       }
     }
   }
 
+  /**
+   * Returns an object specifying separately 
+   * the priority item and the rest of the items
+   *
+   * @returns an active collectioned keying the priority item and the rest
+   */
   public items(): ActiveCollection<P> {
-    const temp: ActiveCollection<P> = {
-      leader: this.dq[0],
-      inactive: this.dq.filter((_, i) => i !== 0),
+    // Return the current collection if called on empty
+    if (this.dq.size() === 0) {
+      return this.collection;
     }
-    return temp;
+
+    // Return a collection only defining the leader if called on a one-item queue
+    if (this.dq.size() === 1) {
+      return { leader: this.dq.first().item, inactive: null };
+    }
+
+    // Initialize an array for storing items post-traversal of queue
+    let items = [];
+
+    // Store the priority item first before traversing
+    let traverser = this.dq.first();
+    items.push(traverser.item);
+
+    // Traverse the queue and store to items array without dereferencing
+    while (this.dq.size() !== items.length) {
+      traverser = traverser.next() as NonNullable<ReturnType<typeof traverser['next']>>;
+      items.push(traverser.item);
+    }
+
+    // Update the current collection
+    return this.collection = {
+      leader: items[0],
+      inactive: items.filter((_, i) => i !== 0) as P[],
+    }
   }
 
   public dispatch(storedNode?: P | undefined): void {
@@ -32,7 +79,7 @@ export default class CQDispatcher<T, P extends Promise<T>> implements Dispatcher
   }
 
   public capacity(): number {
-    return this.dq.length;
+    return this.sz;
   }
 
   public append(evt: P): number {

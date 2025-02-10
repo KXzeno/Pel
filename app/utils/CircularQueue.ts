@@ -179,6 +179,7 @@ export default class CircularQueue<T> {
       if (this.leader.item !== null) {
         const data = { ...this.leader } as const;
         this.leader.item = null;
+        this.sz--;
         return data as Node<T>;
       }
       throw new Error('No items to dequeue.');

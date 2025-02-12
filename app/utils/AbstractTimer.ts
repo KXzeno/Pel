@@ -38,19 +38,28 @@ export default abstract class Timer {
     // Handle optional arguments
     // TODO: Implement methods or concrete case definitions
     if (options && options.diff) {
-      // Truncate to 10^4 for rounding then evaluate to nearest tenths of a second 
-      const timerDiff = Math.round((end - options.diff.start) / options.diff.start * 10000) / 100;
+      // Initialize millisecond differences of both timers
+      const timer1Diff = end - start;
+      const timer2Diff = options.diff.end - options.diff.start;
+
+      // Truncate to 10^4 for rounding then evaluate to nearest tenths of a second for %
+      const timerDiffPercent = Math.round((timer1Diff - timer2Diff) / timer2Diff * 10000) / 100;
+
+      // Truncate millisecond difference between the timers
+      const timerDiff = Math.round(timer1Diff - timer2Diff * 10000) / 100;
 
       // If signaling 'final', return the change in % from start (options) to end (timer)
       if (options.final) {
-        return `Overall change: ${timerDiff}%\n\n`;
+        return `Overall change: ${timerDiffPercent}%\n\n`;
       }
 
       // Format when comparing a previous record
-      return `\u{1F7E2}: ${start}ms\n\u{1F3C1}: ${end}ms\n    \u2193\nChanged by ${timerDiff}%\n\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\n`
+      return `\u{1F7E2}: ${start}ms\n\u{1F3C1}: ${end}ms\n    \u2193\nChanged by ${timerDiffPercent}%, ${timerDiff}ms\n\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\n`
     }
     // Default format
-    return `\u{1F7E2}: ${start}ms\n\u{1F3C1}: ${end}ms\n    \u2193\n    \u2193`
+    return this.instances.length !== 1 ? 
+      `\u{1F7E2} : ${start}ms\n\u{1F3C1} : ${end}ms\n    \u2193\n    \u2193` :
+      `\u{1F7E2} : ${start}ms\n\u{1F3C1} : ${end}ms\n\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\n`;
   }
 
   /**

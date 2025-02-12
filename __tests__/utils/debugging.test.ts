@@ -3,21 +3,34 @@ import Timer from "@/utils/AbstractTimer";
 
 describe('initializes valid timers', () => {
   test('automates performance timer tracking via single method', () => {
-    PerfTimer.track();
-    let arr1 = [];
-    while (arr1.length !== 20000) {
-      arr1.push(1);
-      expect(arr1[arr1.length - 1] === 1);
-    }
+    // Call count is 0
+    expect(PerfTimer.calls).toBe(0);
+
+    // Starts a new timer
     PerfTimer.track();
 
+    const arr1: number[] = [];
+    while (arr1.length !== 200) {
+      arr1.push(1);
+    }
+
+    // Instantiates the PerfTimer to Timer
     PerfTimer.track();
-    let arr2 = [];
+
+    expect(PerfTimer.calls).toBe(2);
+
+    // Starts a new timer
+    PerfTimer.track();
+    const arr2: number[] = [];
     while (arr2.length !== 20) {
       arr2.push(1);
-      expect(arr2[arr2.length - 1] === 1);
     }
+    // Instantiates the PerfTimer to Timer
     PerfTimer.track();
+
+    expect(PerfTimer.calls).toBe(4);
+
+    // Outputs the difference between the previous two timers
     Timer.display();
   });
 });

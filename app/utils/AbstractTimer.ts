@@ -35,15 +35,19 @@ export default abstract class Timer {
     start = Math.round(start * 100) / 100;
     end = Math.round(end * 100) / 100;
 
+    // Initialize difference for ms runtime 
+    const rt = Math.round(1 + (end - start) * 1000) / 1000;
+
     // Handle optional arguments
     // TODO: Implement methods or concrete case definitions
     if (options && options.diff) {
       // Initialize millisecond differences of both timers
-      const timer1Diff = end - start;
-      const timer2Diff = options.diff.end - options.diff.start;
+      // Offset by 1 to handle cases of 0-based quotients
+      const timer1Diff = 1 + end - start;
+      const timer2Diff = 1 + options.diff.end - options.diff.start;
 
       // Truncate to 10^4 for rounding then evaluate to nearest tenths of a second for %
-      const timerDiffPercent = Math.round((timer1Diff - timer2Diff) / timer2Diff * 10000) / 100;
+      const timerDiffPercent = Math.round((timer1Diff - timer2Diff) / timer1Diff * 10000) / 100;
 
       // Truncate millisecond difference between the timers
       const timerDiff = Math.round(timer1Diff - timer2Diff * 10000) / 100;
@@ -54,12 +58,12 @@ export default abstract class Timer {
       }
 
       // Format when comparing a previous record
-      return `\u{1F7E2}: ${start}ms\n\u{1F3C1}: ${end}ms\n    \u2193\nChanged by ${timerDiffPercent}%, ${timerDiff}ms\n\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\n`
+      return `\u{1F7E2}: ${start}ms\n\u{1F3C1}: ${end}ms - (${rt}ms)\n    \u2193\nChanged by ${timerDiffPercent}%, ${timerDiff}ms\n\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\n`
     }
     // Default format
     return this.instances.length !== 1 ? 
-      `\u{1F7E2} : ${start}ms\n\u{1F3C1} : ${end}ms\n    \u2193\n    \u2193` :
-      `\u{1F7E2} : ${start}ms\n\u{1F3C1} : ${end}ms\n\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\n`;
+      `\u{1F7E2} : ${start}ms\n\u{1F3C1} : ${end}ms - (${rt}ms)\n    \u2193\n    \u2193` :
+      `\u{1F7E2} : ${start}ms\n\u{1F3C1} : ${end}ms - (${rt}ms)\n\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\u{A8}\n`;
   }
 
   /**
@@ -69,6 +73,10 @@ export default abstract class Timer {
    *
    * TODO: Find if possible a better solution to length checking 
    * or modularize and encapsulate the case definitions
+   *
+   * TODO: Override this within subclasses to which their display method
+   * displays their timer, position in this class and the position respective 
+   * to other timers of the same type
    */
     public static display(options: DisplayOptions = {
     type: TimerType.Debug,

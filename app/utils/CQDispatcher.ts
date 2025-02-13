@@ -9,7 +9,6 @@ import CircularQueue from './CircularQueue';
  */
 export default class CQDispatcher<T, P extends Promise<T>> implements Dispatcher<P> {
   private dq: CircularQueue<P> = new CircularQueue<P>();
-  private sz: number = 0;
   private collection: ActiveCollection<P> = { leader: null, inactive: null };
 
   /**
@@ -26,7 +25,6 @@ export default class CQDispatcher<T, P extends Promise<T>> implements Dispatcher
   public constructor(...inputs: P[]) {
     // Only modify the class queue if inputs are passed
     if (inputs) {
-      this.sz = inputs.length;
       if (inputs.length === 1) {
         this.dq.enqueue(inputs[0]);
         return;
@@ -79,11 +77,17 @@ export default class CQDispatcher<T, P extends Promise<T>> implements Dispatcher
   }
 
   public capacity(): number {
-    return this.sz;
+    return this.dq.size();
   }
 
+  /**
+   * Appends and event to the dispatcher
+   *
+   * @param evt - the event to append
+   * @returns the new capacity of the queue
+   */
   public append(evt: P): number {
-    return this.sz;
+    return this.dq.size();
   }
 
   public clear(): void {

@@ -111,6 +111,7 @@ describe('Utilities for landing component', () => {
     const p1 = new Promise<string>((r,) => { r('1'); });
     const p2 = new Promise<string>((r,) => { r('2'); });
     const p3 = new Promise<string>((r,) => { r('3'); });
+    const p4 = new Promise<string>((r,) => { r('4'); });
 
     // Instantiate a dispatcher queue with the 3 promise args
     const d1 = new CQDispatcher(p1, p2, p3)
@@ -118,11 +119,14 @@ describe('Utilities for landing component', () => {
     // Create  object for queue collection conformity
     const d1c = {
       leader: p1,
-      inactive: [p2, p3],
+      inactive: [p2, p3, p4],
     };
 
+    // Append to active dispatcher
+    d1.append(p4);
+
     // Validate queue collection
-    expect(d1.capacity()).toBe(3);
+    expect(d1.capacity()).toBe(4);
     expect(d1.items()).not.toBeNull();
     expect(d1.items()).toMatchObject(d1c);
 
@@ -141,7 +145,16 @@ describe('Utilities for landing component', () => {
     expect(inactive).toBeNull();
     expect(d2.capacity()).toBe(0)
 
-    // Append to dispatcher
+    // Append to inactive dispatcher
+    d2.append(p1);
 
+    /**
+     * @privateRemarks
+     *
+     * Confused; there is no referential or value equality for 
+     * promise (leader), it just needs to be a promise.
+     */
+    expect (d2.items()).toMatchObject({ leader: p1, inactive: null });
+    expect (d2.capacity() === 1);
   });
 });

@@ -75,10 +75,36 @@ export default class CQDispatcher<T, P extends Promise<T>> implements Dispatcher
     }
   }
 
-  public dispatch(storedNode?: P | undefined): void {
-    console.log(storedNode);
+  /**
+   * Begins a synchronous dispatch of stored events starting 
+   * from the leader and returns the refreshed dispatcher
+   *
+   * @returns the cleared dispatcher
+   */
+  public async dispatch(): Promise<CQDispatcher<T, P>> {
+    // Extract event and next reference
+    const [evt, next] = [this.dq.first(), this.dq.first().next()];
+    // Dispatch when leader is truthy
+    if (evt !== null && evt.item !== null) {
+      await evt.item.then(async () => {
+        this.dq.dequeue();
+        this.items();
+        if (next) {
+          await this.dispatch();
+        } 
+      });
+    } else {
+      // Ensure queue is cleared
+      this.clear();
+    }
+    return this;
   }
 
+  /**
+   * Returns the current length of the queue
+   *
+   * @returns length of dispatch queue
+   */
   public capacity(): number {
     return this.dq.size();
   }
@@ -94,6 +120,14 @@ export default class CQDispatcher<T, P extends Promise<T>> implements Dispatcher
     return this.dq.size();
   }
 
+  /**
+   * Recursively dequeue and update the active collection
+   *
+   * @remarks
+   *
+   * An optional param to dequeue an in-between requires
+   * a new data structure, like a deque.
+   */
   public clear(): void {
     if (this.capacity() === 0) {
       return;

@@ -122,8 +122,14 @@ describe('Utilities for landing component', () => {
     };
 
     // Validate queue collection
+    expect(d1.capacity()).toBe(3);
     expect(d1.items()).not.toBeNull();
     expect(d1.items()).toMatchObject(d1c);
+
+    // Clear the queue and reset active collection
+    d1.clear();
+    expect(d1.items()).toMatchObject({ leader: null, inactive: null });
+    expect(d1.capacity()).toBe(0);
 
     // Instantiate a dispatcher queue with no args
     const d2 = new CQDispatcher();
@@ -133,5 +139,9 @@ describe('Utilities for landing component', () => {
 
     expect(leader).toBeNull();
     expect(inactive).toBeNull();
+    expect(d2.capacity()).toBe(0)
+
+    // Append to dispatcher
+
   });
 });

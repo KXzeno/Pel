@@ -19,7 +19,7 @@ mockIntersectionObserver.mockReturnValue({
 window.IntersectionObserver = mockIntersectionObserver;
 
 describe('Landing component', () => {
-  test('renders header section', async () => {
+  test('renders header section', () => {
     let { container } = render(<LandingHeader />);
 
     // Validate header
@@ -106,12 +106,12 @@ describe('Utilities for landing component', () => {
     }
   });
 
-  test('construct a valid cq-dispatcher', () => {
+  test('construct a valid cq-dispatcher', async () => {
     // Initialize promises to pass as args in dispatcher queue
-    const p1 = new Promise<string>((r,) => { r('1'); });
-    const p2 = new Promise<string>((r,) => { r('2'); });
-    const p3 = new Promise<string>((r,) => { r('3'); });
-    const p4 = new Promise<string>((r,) => { r('4'); });
+    const p1 = new Promise<string>((r,) => { setTimeout(() => r('1'), 100); });
+    const p2 = new Promise<string>((r,) => { setTimeout(() => r('2'), 200); });
+    const p3 = new Promise<string>((r,) => { setTimeout(() => r('3'), 300); });
+    const p4 = new Promise<string>((r,) => { setTimeout(() => r('4'), 400); });
 
     // Instantiate a dispatcher queue with the 3 promise args
     const d1 = new CQDispatcher(p1, p2, p3)
@@ -156,5 +156,8 @@ describe('Utilities for landing component', () => {
      */
     expect (d2.items()).toMatchObject({ leader: p1, inactive: null });
     expect (d2.capacity() === 1);
+
+    const d3 = new CQDispatcher(p1, p2, p3, p4);
+    await d3.dispatch();
   });
 });

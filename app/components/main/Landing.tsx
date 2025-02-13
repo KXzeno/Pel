@@ -5,15 +5,15 @@ import { LandingHeader, LandingNavBar } from '@f';
 
 export default function Landing() {
   return (
-    <div id="main-landing">
+    <main id="main-landing">
       <LandingNavBar />
       <LandingHeader />
-      <main role="main">
+      <h1>
         Writing your own book, learning a specific craft, optimizing game strats—every journey warrants the need for archives, for sentiment or betterment.
-      </main>
+      </h1>
       <div className='mt-512'>
         What
       </div>
-    </div>
+    </main>
   )
 }

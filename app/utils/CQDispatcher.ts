@@ -27,10 +27,13 @@ export default class CQDispatcher<T, P extends Promise<T>> implements Dispatcher
     if (inputs) {
       if (inputs.length === 1) {
         this.dq.enqueue(inputs[0]);
+        // Call items to update collection
+        this.items();
         return;
       } 
       for (let i = 0; i < inputs.length; i++) {
         this.dq.enqueue(inputs[i]);
+        this.items();
       }
     }
   }
@@ -117,6 +120,8 @@ export default class CQDispatcher<T, P extends Promise<T>> implements Dispatcher
    */
   public append(evt: P): number {
     this.dq.enqueue(evt);
+    // Call items to update collection
+    this.items();
     return this.dq.size();
   }
 

@@ -42,8 +42,11 @@ export default class CQDispatcher<T, P extends Promise<T>> implements Dispatcher
    * @returns an active collectioned keying the priority item and the rest
    */
   public items(): ActiveCollection<P> {
-    // Return the current collection if called on empty
+    // Return the current collection if called on empty or stale leader
     if (this.dq.size() === 0) {
+      if (this.collection.leader !== null) {
+        return { leader: null, inactive: null };
+      }
       return this.collection;
     }
 
@@ -87,9 +90,18 @@ export default class CQDispatcher<T, P extends Promise<T>> implements Dispatcher
    * @returns the new capacity of the queue
    */
   public append(evt: P): number {
+    this.dq.enqueue(evt);
     return this.dq.size();
   }
 
   public clear(): void {
+    if (this.capacity() === 0) {
+      return;
+    }
+    const size = this.capacity();
+    for (let i = size; i !== 0; i--) {
+      this.dq.dequeue();
+      this.items();
+    }
   }
 }

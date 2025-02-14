@@ -3,8 +3,49 @@
 import React from 'react';
 
 import useObserver from '@hooks/useObserver';
+import CQDispatcher from '@/utils/CQDispatcher';
+
+type ReducerState = {
+  controller: CQDispatcher<any, any>;
+}
+
+type ReducerAction = {
+  type: 'queue' | 'clear' | 'trigger' ;
+  payload?: {
+    evt: unknown;
+  }
+}
+
+function evtReducer(state: ReducerState, action: ReducerAction) {
+  switch (action.type) {
+    case 'trigger': {
+      state.controller.dispatch();
+      return state;
+    }
+    case 'queue': {
+      if (action.payload == null) {
+        console.debug('No payload received.');
+        return { ...state };
+      }
+      const { evt } = action.payload;
+      if (evt instanceof Promise || evt instanceof Function) {
+        state.controller.append(evt);
+      } else {
+        // console.error('Not an event / promise.');
+      }
+      return state;
+    }
+    case 'clear': {
+      state.controller.clear();
+      return state;
+    }
+  }
+}
 
 export default function LandingHeader() {
+  // Initialize reducer to persist dispatcher state
+  const [evtState, dispatch] = React.useReducer<ReducerState, [ReducerAction]>(evtReducer, { controller: new CQDispatcher() });
+
   // Initialize custom hook utilizing intersection observer API
   const [observed, observedRef] = useObserver();
 
@@ -37,6 +78,7 @@ export default function LandingHeader() {
 
     // Declare higher scope event listener to assist garbage collection
     function handleClearMergeAnimationOnEnd(event: Event) {
+      // dispatch({ type: 'clear' });
       // Extract element from event target
       const navItem = event.target as HTMLDivElement;
 
@@ -77,38 +119,62 @@ export default function LandingHeader() {
         }
       }
     }
-
+    const { leader, inactive } = evtState.controller.items();
+    console.log(evtState.controller.items());
     if (evoked === false) {
-      // Add the merge-in transitions when header is out of screen
-      leftHalf.forEach(navItem => {
-        navItem.classList.add('nav-item-merged-from-left');
-        navItem.addEventListener('animationend', handleClearMergeAnimationOnEnd)
-      });
-      rightHalf.forEach(navItem => {
-        navItem.classList.add('nav-item-merged-from-right');
-        navItem.addEventListener('animationend', handleClearMergeAnimationOnEnd)
-      });
-      // Invoke bg shrink animation
-      bg.classList.add('navbar-shrink');
+      async function promiseAnim() {
+        const mergeOut = new Promise((r,) => {
+          const signalDispatch = (e: Event) => {
+            r('successfully unmerged');
+            e.target!.removeEventListener('animationend', signalDispatch);
+          }
+          // Add the merge-in transitions when header is out of screen
+          leftHalf.forEach(navItem => {
+            navItem.classList.add('nav-item-merged-from-left');
+            navItem.addEventListener('animationend', handleClearMergeAnimationOnEnd)
+            navItem.addEventListener('animationend', signalDispatch);
+          });
+          rightHalf.forEach(navItem => {
+            navItem.classList.add('nav-item-merged-from-right');
+            navItem.addEventListener('animationend', handleClearMergeAnimationOnEnd)
+            navItem.addEventListener('animationend', signalDispatch);
+          });
+          // Invoke bg shrink animation
+          bg!.classList.add('navbar-shrink');
+        });
+      }
+      dispatch({ type: 'queue', payload: { evt: promiseAnim } });
+
     } else {
-      /**
-       * Add the merge-in transitions when header is on screen
-       *
-       * @remarks
-       *
-       * The animations are the same, except distributed inversely, for
-       * disparate animations on each event, create a new one
-       */
-      leftHalf.forEach(navItem => {
-        navItem.classList.add('nav-item-merged-from-right')
-        navItem.addEventListener('animationend', handleClearMergeAnimationOnEnd)
-      });
-      rightHalf.forEach(navItem => { 
-        navItem.classList.add('nav-item-merged-from-left');
-        navItem.addEventListener('animationend', handleClearMergeAnimationOnEnd)
-      });
-      // Invoke bg grow animation
-      bg.classList.add('navbar-grow');
+      async function promiseAnim() {
+        const mergeIn = new Promise((r,) => {
+          const signalDispatch = (e: Event) => {
+            r('successfully unmerged');
+            e.target!.removeEventListener('animationend', signalDispatch);
+          }
+          /**
+           * Add the merge-in transitions when header is on screen
+           *
+           * @remarks
+           *
+           * The animations are the same, except distributed inversely, for
+           * disparate animations on each event, create a new one
+           */
+          leftHalf.forEach(navItem => {
+            navItem.classList.add('nav-item-merged-from-right')
+            navItem.addEventListener('animationend', handleClearMergeAnimationOnEnd)
+            navItem.addEventListener('animationend', signalDispatch);
+          });
+          rightHalf.forEach(navItem => { 
+            navItem.classList.add('nav-item-merged-from-left');
+            navItem.addEventListener('animationend', handleClearMergeAnimationOnEnd)
+            navItem.addEventListener('animationend', signalDispatch);
+          });
+          // Invoke bg grow animation
+          bg!.classList.add('navbar-grow');
+        });
+      }
+        dispatch({ type: 'queue', payload: { evt: promiseAnim } });
     }
 
     // Handle cleanup

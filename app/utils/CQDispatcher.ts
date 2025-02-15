@@ -1,15 +1,23 @@
 import Dispatcher, { type ActiveCollection } from './Dispatcher';
 import CircularQueue from './CircularQueue';
 
+type AsyncFunction<T> = () => Promise<T> ;
+
 /**
  * A circular-queue implementation of a promise dispatcher
  *
  * @typeParam T - Type parameterized within promise argument(s)
  * @typeParam P - Type of promise to concretely define Dispatcher
+ *
+ * TODO: The major flaw of this design is that it initially assumed that
+ * the body definitions of Promise objects are not executed on instantiation.
+ * Being brought light to that, this class needs to be refactored for
+ * polling or another signaling logic to retry their resolvers.
  */
-export default class CQDispatcher<T, P extends Promise<T>> implements Dispatcher<P> {
+export default class CQDispatcher<T, P extends Promise<T> | AsyncFunction<T>> implements Dispatcher<P> {
   private dq: CircularQueue<P> = new CircularQueue<P>();
   private collection: ActiveCollection<P> = { leader: null, inactive: null };
+  public active: boolean = false;
 
   /**
    * @param inputs - the passed promise inputs
@@ -73,7 +81,7 @@ export default class CQDispatcher<T, P extends Promise<T>> implements Dispatcher
 
     // Update the current collection
     return this.collection = {
-      leader: items[0],
+      leader: items[0] as P,
       inactive: items.filter((_, i) => i !== 0) as P[],
     }
   }
@@ -87,19 +95,13 @@ export default class CQDispatcher<T, P extends Promise<T>> implements Dispatcher
   public async dispatch(): Promise<CQDispatcher<T, P>> {
     // Extract event and next reference
     const [evt, next] = [this.dq.first(), this.dq.first().next()];
-    // Dispatch when leader is truthy
-    if (evt !== null && evt.item !== null) {
-      await evt.item.then(async () => {
-        this.dq.dequeue();
-        this.items();
-        if (next) {
-          await this.dispatch();
-        } 
-      });
-    } else {
-      // Ensure queue is cleared
+    const { item } = evt;
+    if (item === null) {
       this.clear();
+      return this;
     }
+
+    this.isAsyncFunction(item) ? await this.dispatchAsyncFunction(item) : await this.dispatchPromise(item);
     return this;
   }
 
@@ -142,5 +144,62 @@ export default class CQDispatcher<T, P extends Promise<T>> implements Dispatcher
       this.dq.dequeue();
       this.items();
     }
+  }
+
+  // TODO:
+  // Type predicate for function arguments
+  private isAsyncFunction(fn: Promise<T> | AsyncFunction<T> | null): fn is AsyncFunction<T> {
+    return (fn as Promise<T>).then === undefined;
+  }
+
+  private async dispatchAsyncFunction(evt: AsyncFunction<T>) {
+    evt().then(async () => {
+      try {
+        this.dq.dequeue();
+      } catch (e) {
+        // TODO: Handle empty dequeue
+      }
+      this.items();
+      const { item } = this.dq.first();
+      if (item !== null && this.isAsyncFunction(item)) {
+        console.log('woot');
+        await this.dispatchAsyncFunction(item);
+      }
+    });
+  }
+
+  private async dispatchPromise(evt: Promise<T>) {
+    this.active = true;
+    // Dispatch when leader is truthy
+    evt.then(async () => {
+      try {
+        this.dq.dequeue();
+      } catch (e) {
+        // TODO: Handle error
+      }
+      this.items();
+      if (this.dq.first() !== null) {
+        await this.dispatch();
+      } 
+      this.active = false;
+    });
+  } 
+
+  public toArray() {
+    let arr = [];
+    const first = this.dq.first();
+    let traverser: NonNullable<typeof first> | null = null;
+    while (arr.length !== this.capacity()) {
+      if (!traverser) {
+        traverser = first;
+        arr.push(first.item);
+        continue;
+      }
+      traverser = traverser.next();
+      if (traverser) {
+        arr.push(traverser.item);
+      }
+    }
+    return arr;
   }
 }

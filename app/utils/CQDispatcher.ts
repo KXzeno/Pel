@@ -121,10 +121,19 @@ export default class CQDispatcher<T, P extends Promise<T> | AsyncFunction<T>> im
    * @returns the new capacity of the queue
    */
   public append(evt: P): number {
+    if (this.active === true) {
+      if (this.isAsyncFunction(evt)) {
+        const qArr = this.toArray();
+        const queued = Promise.all(qArr).then(() => evt())
+        this.append(queued as P);
+        this.items();
+        return this.capacity();
+      }
+    }
     this.dq.enqueue(evt);
     // Call items to update collection
     this.items();
-    return this.dq.size();
+    return this.capacity();
   }
 
   /**
@@ -162,7 +171,6 @@ export default class CQDispatcher<T, P extends Promise<T> | AsyncFunction<T>> im
       this.items();
       const { item } = this.dq.first();
       if (item !== null && this.isAsyncFunction(item)) {
-        console.log('woot');
         await this.dispatchAsyncFunction(item);
       }
     });

@@ -171,9 +171,14 @@ export type DebugTimer = {
  * detects property conflicts, whereas the latter 
  * performs recursive merging of properties
  *
+ * @privateRemarks
+ *
+ * Using type for now to avoid linter
+ *
  * @see {@link https://github.com/microsoft/TypeScript/wiki/Performance#preferring-interfaces-over-intersections}
  */
-interface Timers extends DebugTimer {};
+// interface Timers extends DebugTimer {};
+type Timers = DebugTimer;
 
 // Used for `options` param in display method
 type DisplayOptions = {

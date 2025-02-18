@@ -42,7 +42,7 @@ function toggleRadial<R extends NodeListOf<Element> | Element>(radialOrRadialCol
     // ELSE if the arg is a single element, invoke an IIFE that
     // parses it's preceding sibling (the radial) and trigger
     // animations with leave/enter logic
-  })(radialOrRadialCollection): +((elem) => {
+  })(radialOrRadialCollection) : +((elem) => {
     const precedingSibling = elem.previousElementSibling;
 
     // Return 'never' if the radial doesn't exist

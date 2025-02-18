@@ -27,5 +27,5 @@ h1 {
 }
 
 #hero > #start-btn {
-  @apply relative bg-[#441752] hover:bg-[#432E54] rounded-full text-sm px-2.25 py-0.75 outline-[1.9] outline-solid hover:outline-[#FAB12F] hover:cursor-pointer;
+  @apply relative bg-[#441752] hover:bg-[#432E54] rounded-full text-sm px-2.25 py-0.75 outline-[1.9] outline-solid hover:outline-[#FAB12F] hover:cursor-pointer -z-5;
 }

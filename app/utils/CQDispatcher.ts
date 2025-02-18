@@ -1,7 +1,7 @@
 import Dispatcher, { type ActiveCollection } from './Dispatcher';
 import CircularQueue from './CircularQueue';
 
-type AsyncFunction<T> = () => Promise<T> ;
+export type AsyncFunction<T> = () => Promise<T> ;
 
 /**
  * A circular-queue implementation of a promise dispatcher
@@ -67,7 +67,7 @@ export default class CQDispatcher<T, P extends Promise<T> | AsyncFunction<T>> im
     }
 
     // Initialize an array for storing items post-traversal of queue
-    let items = [];
+    const items = [];
 
     // Store the priority item first before traversing
     let traverser = this.dq.first();
@@ -92,17 +92,21 @@ export default class CQDispatcher<T, P extends Promise<T> | AsyncFunction<T>> im
    *
    * @returns the cleared dispatcher
    */
-  public async dispatch(): Promise<CQDispatcher<T, P>> {
+  public async dispatch(): Promise<{ dispatcher: CQDispatcher<T, P>, fulfilled: boolean }> {
     // Extract event and next reference
-    const [evt, next] = [this.dq.first(), this.dq.first().next()];
+    // FIXME: Employ checks / logic using next to avoid linter
+    // const [evt, next] = [this.dq.first(), this.dq.first().next()];
+    const evt = this.dq.first();
     const { item } = evt;
     if (item === null) {
       this.clear();
-      return this;
+      return { dispatcher: this, fulfilled: this.active };
     }
 
-    this.isAsyncFunction(item) ? await this.dispatchAsyncFunction(item) : await this.dispatchPromise(item);
-    return this;
+    // Cannot invoke via ternary otherwise compiler error
+    const dispatchedRef: boolean | null = this.isAsyncFunction(item) ? await this.dispatchAsyncFunction(item) : await this.dispatchPromise(item);
+
+    return { dispatcher: this, fulfilled: dispatchedRef };
   }
 
   /**
@@ -155,35 +159,39 @@ export default class CQDispatcher<T, P extends Promise<T> | AsyncFunction<T>> im
     }
   }
 
-  // TODO:
-  // Type predicate for function arguments
+  // TODO: Type predicate for function arguments
   private isAsyncFunction(fn: Promise<T> | AsyncFunction<T> | null): fn is AsyncFunction<T> {
     return (fn as Promise<T>).then === undefined;
   }
 
-  private async dispatchAsyncFunction(evt: AsyncFunction<T>) {
+  private async dispatchAsyncFunction(evt: AsyncFunction<T>): Promise<boolean> {
+    this.active = true;
     evt().then(async () => {
       try {
         this.dq.dequeue();
       } catch (e) {
-        // TODO: Handle empty dequeue
+        // FIXME: Handle empty dequeue
+        console.error(e);
       }
       this.items();
       const { item } = this.dq.first();
       if (item !== null && this.isAsyncFunction(item)) {
         await this.dispatchAsyncFunction(item);
       }
+      this.active = false;
     });
+    return !(this.active)
   }
 
-  private async dispatchPromise(evt: Promise<T>) {
+  private async dispatchPromise(evt: Promise<T>): Promise<boolean> {
     this.active = true;
     // Dispatch when leader is truthy
     evt.then(async () => {
       try {
         this.dq.dequeue();
       } catch (e) {
-        // TODO: Handle error
+        // FIXME: Handle error
+        console.error(e);
       }
       this.items();
       if (this.dq.first() !== null) {
@@ -191,10 +199,11 @@ export default class CQDispatcher<T, P extends Promise<T> | AsyncFunction<T>> im
       } 
       this.active = false;
     });
+    return !(this.active);
   } 
 
   public toArray() {
-    let arr = [];
+    const arr = [];
     const first = this.dq.first();
     let traverser: NonNullable<typeof first> | null = null;
     while (arr.length !== this.capacity()) {

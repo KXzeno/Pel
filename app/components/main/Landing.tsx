@@ -8,11 +8,11 @@ export default function Landing() {
     <main id="main-landing">
       <LandingNavBar />
       <LandingHeader />
-      <h1>
+      <h3 className='text-center'>
         Writing your own book, learning a specific craft, optimizing game strats—every journey warrants the need for archives, for sentiment or betterment.
-      </h1>
-      <div className='mt-512'>
-        What
+      </h3>
+      <div className='mt-512 text-3xl text-center'>
+        IN PROGRESS
       </div>
     </main>
   )

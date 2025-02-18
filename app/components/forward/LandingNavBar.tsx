@@ -99,13 +99,17 @@ export default function LandingNavBar(): React.ReactNode {
         className='text-white'
       >
         <div id='nav-ctr'>
-          <div className='nav-item'>
-            <div className='nav-radial-off' />
+          <div className='nav-item cursor-not-allowed'>
+            <div className='nav-radial-off cursor-not-allowed' />
             <Link 
               id='sample-nav-btn' 
               href='none'
+              className='cursor-not-allowed'
               onPointerOver={handleRadialActivation}
               onPointerLeave={handleRadialActivation}
+              onClick={(e) => {
+                e.preventDefault();
+              }}
             >
               Sample
             </Link>
@@ -114,31 +118,39 @@ export default function LandingNavBar(): React.ReactNode {
             <div className='nav-radial-off' />
             <Link 
               id='blog-nav-btn' 
-              href='none'
+              href='https://blog.karnovah.com/'
               onPointerOver={handleRadialActivation}
               onPointerLeave={handleRadialActivation}
             >
               Blog
             </Link>
           </div>
-          <div className='nav-item'>
-            <div className='nav-radial-off' />
+          <div className='nav-item cursor-not-allowed'>
+            <div className='nav-radial-off cursor-not-allowed' />
             <Link 
               id='docs-nav-btn'
               href='none'
+              className='cursor-not-allowed'
               onPointerOver={handleRadialActivation}
               onPointerLeave={handleRadialActivation}
+              onClick={(e) => {
+                e.preventDefault();
+              }}
             >
               Docs
             </Link>
           </div>
-          <div className='nav-item'>
-            <div className='nav-radial-off' />
+          <div className='nav-item cursor-not-allowed'>
+            <div className='nav-radial-off cursor-not-allowed' />
             <Link 
               id='discord-nav-btn'
               href='none'
+              className='cursor-not-allowed'
               onPointerOver={handleRadialActivation}
               onPointerLeave={handleRadialActivation}
+              onClick={(e) => {
+                e.preventDefault();
+              }}
             >
               Discord
             </Link>

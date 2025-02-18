@@ -34,7 +34,9 @@ function evtReducer(state: ReducerState, action: ReducerAction) {
       const { evt } = action.payload;
       if (evt instanceof Promise || evt instanceof Function) {
         state.controller.append(evt);
-        state.controller.dispatch();
+        if (!state.controller.active) {
+          state.controller.dispatch();
+        }
       } else {
         console.error('Not an event / promise.');
       }

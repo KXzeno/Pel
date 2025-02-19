@@ -1,0 +1,61 @@
+@import "tailwindcss";
+@reference "../../../globals.css";
+
+@theme {
+  --animate-spin-slower: spiral 20s linear infinite;
+  --animate-spin-slow: spiral 15s linear infinite;
+  --animate-spin-fast: spiral 8s linear infinite;
+  @keyframes spiral {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  --animate-size-up: size-up 0.17s linear;
+  @keyframes size-up {
+    from {
+      transform: scale(0);
+    }
+    to {
+      transform: scale(1);
+    }
+  }
+
+  --animate-size-down: size-down 0.17s linear;
+  @keyframes size-down {
+    from {
+      transform: scale(1);
+    }
+    to {
+      transform: scale(0);
+    }
+  }
+}
+
+.blackhole-ctr {
+  @apply relative w-24 h-24;
+}
+
+.blackhole-glow {
+  @apply absolute inset-0 bg-violet-900/5 rounded-full blur-md;
+}
+
+.blackhole-spiral {
+  @apply absolute inset-0;
+}
+
+.blackhole {
+  @apply w-full h-full animate-spin-slower;
+}
+
+.blackhole-blur {
+  @apply blur-[0.3px];
+}
+
+.blackhole-center {
+  @apply abs-center;
+  animation: none !important;
+}

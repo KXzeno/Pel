@@ -99,17 +99,13 @@ export default function LandingNavBar(): React.ReactNode {
         className='text-white'
       >
         <div id='nav-ctr'>
-          <div className='nav-item cursor-not-allowed'>
-            <div className='nav-radial-off cursor-not-allowed' />
+          <div className='nav-item'>
+            <div className='nav-radial-off' />
             <Link 
               id='sample-nav-btn' 
-              href='none'
-              className='cursor-not-allowed'
+              href='/sample'
               onPointerOver={handleRadialActivation}
               onPointerLeave={handleRadialActivation}
-              onClick={(e) => {
-                e.preventDefault();
-              }}
             >
               Sample
             </Link>

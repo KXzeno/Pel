@@ -9,9 +9,9 @@ export default function Sample() {
 
   return (
     <div>
-      <div className='abs-center -translate-y-70'>
-        <h1>IN DEVELOPMENT</h1>
-        <ul className='text-xs'>
+      <div className='relative mx-auto text-center w-62 translate-y-8'>
+        <p>IN DEVELOPMENT</p>
+        <ul className='text-xs text-left'>
           <li>- Adopt similar structure to <Link href='https://github.com/KXzeno/adk' className='text-blue-500 hover:text-blue-800'>ADK</Link> </li>
           <li>- Input forms linking to database</li>
           <li>- Highlight linked nodes when hovering</li>

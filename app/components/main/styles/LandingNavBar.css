@@ -3,7 +3,7 @@
 @reference "../../../globals.css";
 
 #main-nav {
-  @apply absolute fixed flex flex-col content-center items-center text-center text-[#FFD95F] font-diphylleia h-16 w-full;
+  @apply absolute fixed flex flex-col content-center items-center text-center text-[#FFD95F] font-diphylleia h-16 w-full z-20;
 }
 
 #nav-ctr {

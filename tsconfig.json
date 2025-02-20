@@ -23,11 +23,12 @@
       "@/*": ["./*"],
       "@/Icons/*": ["./components/Icons/*"],
       "@f": ["./components/forward/index.ts"],
-      "@main": ["./components/main/index.ts"],
       "@f/*": ["./components/forward/*"],
+      "@main": ["./components/main/index.ts"],
       "@main/*": ["./components/main/*"],
       "@hooks/*": ["./components/hooks/*"],
       "@utils/*": ["./utils/*"],
+      "@providers/*": ["./components/providers/*"],
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],

@@ -45,7 +45,7 @@ function enclaveReducer(state: ReducerState, action: ReducerAction): ReducerStat
           moduleAdderInput: action.payload.data as string,
         }
       }
-      return { ...state };
+      return { ...state, moduleAdderInput: '' };
     }
     case DispatcherType.ModuleUpdate: {
       // TODO: Implement module update logic

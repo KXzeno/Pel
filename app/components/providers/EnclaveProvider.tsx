@@ -59,6 +59,11 @@ function enclaveReducer(state: ReducerState, action: ReducerAction): ReducerStat
         throw new Error('No input parsed.');
       }
 
+      // TODO: Properly submissions
+      if ((action.payload.data as string).length === 0) {
+        return { ...state };
+      }
+
       const { data: input } = action.payload;
 
       const newModule: EnclaveData = { 

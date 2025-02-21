@@ -3,6 +3,7 @@
 import React from 'react';
 
 import '../main/styles/Sample.css';
+import BlackHole from '../forward/BlackHole';
 
   // TODO: Assign this to user data when auth is set up
 import { defaultData, type EnclaveData } from '@/utils/DefaultEnclaveData';
@@ -89,11 +90,14 @@ export default function Enclave(): React.ReactNode {
       dispatchEnclave,
       }}>
       <div>
-        <ul>
+        <ul className='flex flex-row'>
           {enclave.loadedModules.map(mod => {
             return (
               <li key={mod.id}>
-                {mod.name}
+                <BlackHole id={mod.id}>
+                  <p className='abs-center font-diphylleia -translate-y-10 text-nowrap'>{mod.name}</p>
+                  <button type="button" className='w-5 h-5 border-2 border-violet-300/50 rounded-lg bg-violet-300/50 cursor-pointer' /> 
+                </BlackHole>
               </li>
             );
           })}

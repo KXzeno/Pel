@@ -21,6 +21,7 @@ export const EnclaveContext: React.Context<ContextData> = React.createContext({
 
 enum DispatcherType {
   ModuleInput = 'INPUT',
+  ModuleInputSubmit = 'INPUT_SUBMIT',
   ModuleUpdate = 'UPDATE',
 }
 
@@ -30,7 +31,7 @@ interface ReducerState {
 }
 
 interface ReducerAction {
-  type: DispatcherType.ModuleInput | DispatcherType.ModuleUpdate;
+  type: DispatcherType;
   payload?: {
     data: string | EnclaveData;
   }
@@ -51,6 +52,10 @@ function enclaveReducer(state: ReducerState, action: ReducerAction): ReducerStat
       // TODO: Implement module update logic
       console.info('Unfinished implementation.');
       return { ...state };
+    }
+    case DispatcherType.ModuleInputSubmit: {
+      // TODO: Implement submit logic
+      return { ...state, moduleAdderInput: '' };
     }
   }
 }
@@ -76,13 +81,23 @@ export default function Enclave(): React.ReactNode {
         <button type='button' id='module-adder'>
           +
         </button>
-        <input 
-          type="text"
-          id='module-adder-input' 
-          value={enclave.moduleAdderInput}
-          onChange={ (e) => dispatchEnclave({ type: DispatcherType.ModuleInput, payload: { data: e.target.value  } }) }
-          placeholder=' Enter enclave name' 
-        />
+        { /** TODO: Create actions */ }
+        <form 
+          action="" 
+          method="post"
+          onSubmit={(e) => {
+            e.preventDefault(); 
+            dispatchEnclave({ type: DispatcherType.ModuleInputSubmit });
+          }}
+        >
+          <input 
+            type="text"
+            id='module-adder-input' 
+            value={enclave.moduleAdderInput}
+            onChange={ (e) => dispatchEnclave({ type: DispatcherType.ModuleInput, payload: { data: e.target.value  } }) }
+            placeholder=' Enter enclave name' 
+          />
+        </form>
       </div>
     </EnclaveContext.Provider>
   );

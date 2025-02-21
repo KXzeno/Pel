@@ -49,13 +49,28 @@ function enclaveReducer(state: ReducerState, action: ReducerAction): ReducerStat
       return { ...state, moduleAdderInput: '' };
     }
     case DispatcherType.ModuleUpdate: {
-      // TODO: Implement module update logic
+      // TODO: Implement module update logic when using database
       console.info('Unfinished implementation.');
       return { ...state };
     }
     case DispatcherType.ModuleInputSubmit: {
-      // TODO: Implement submit logic
-      return { ...state, moduleAdderInput: '' };
+      console.log(action.payload);
+      if (!action.payload) {
+        throw new Error('No input parsed.');
+      }
+
+      const { data: input } = action.payload;
+
+      const newModule: EnclaveData = { 
+        id: `E${state.loadedModules.length + 1}`,
+        name: input as string,
+      }
+
+      // TODO: Implement deletion logic
+      // Add deletion marker array to reclaim enclave ids,
+      // perhaps with bonus syntax that indicates reclaim
+
+      return { loadedModules: [...state.loadedModules, newModule], moduleAdderInput: '' };
     }
   }
 }
@@ -87,14 +102,26 @@ export default function Enclave(): React.ReactNode {
           method="post"
           onSubmit={(e) => {
             e.preventDefault(); 
-            dispatchEnclave({ type: DispatcherType.ModuleInputSubmit });
+            dispatchEnclave({ 
+              type: DispatcherType.ModuleInputSubmit,
+              payload: {
+                data: enclave.moduleAdderInput,
+              }
+            });
           }}
         >
           <input 
             type="text"
             id='module-adder-input' 
             value={enclave.moduleAdderInput}
-            onChange={ (e) => dispatchEnclave({ type: DispatcherType.ModuleInput, payload: { data: e.target.value  } }) }
+            onChange={ (e) => {
+              dispatchEnclave({
+                type: DispatcherType.ModuleInput, 
+                payload: {
+                  data: e.target.value  
+                } 
+              });
+            }}
             placeholder=' Enter enclave name' 
           />
         </form>

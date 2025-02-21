@@ -8,34 +8,70 @@ import '../main/styles/Sample.css';
 import { defaultData, type EnclaveData } from '@/utils/DefaultEnclaveData';
 
 type ContextData = {
-  loadedModules: object;
-  updateModules: React.Dispatch<React.SetStateAction<EnclaveData[]>>;
+  enclave: ReducerState;
+  dispatchEnclave: React.ActionDispatch<[ReducerAction]>;
+  
 }
 
 export const EnclaveContext: React.Context<ContextData> = React.createContext({
-  loadedModules: {},
-  // FIXME: Find better way of asserting Context type
-  updateModules: (() => null) as React.Dispatch<React.SetStateAction<EnclaveData[]>>,
+  // Defaults
+  enclave: {} as ReducerState,
+  dispatchEnclave: (() => null) as React.ActionDispatch<[ReducerAction]>,
 });
 
+enum DispatcherType {
+  ModuleInput = 'INPUT',
+  ModuleUpdate = 'UPDATE',
+}
+
+interface ReducerState {
+  loadedModules: EnclaveData[];
+  moduleAdderInput: string;
+}
+
+interface ReducerAction {
+  type: DispatcherType.ModuleInput | DispatcherType.ModuleUpdate;
+  payload?: {
+    data: string | EnclaveData;
+  }
+}
+
+function enclaveReducer(state: ReducerState, action: ReducerAction): ReducerState {
+  switch (action.type) {
+    case DispatcherType.ModuleInput: {
+      if (action.payload && action.payload.data) {
+        return {
+          ...state,
+          moduleAdderInput: action.payload.data as string,
+        }
+      }
+      return { ...state };
+    }
+    case DispatcherType.ModuleUpdate: {
+      // TODO: Implement module update logic
+      console.info('Unfinished implementation.');
+      return { ...state };
+    }
+  }
+}
+
 export default function Enclave(): React.ReactNode {
-  const [loadedModules, updateModules] = React.useState<EnclaveData[]>(defaultData);
-  const [moduleAdderInput, setModuleAdderInput] = React.useState<string>('');
+  const [enclave, dispatchEnclave] = React.useReducer<ReducerState, [ReducerAction]>(enclaveReducer, defaultData);
 
   return (
     <EnclaveContext.Provider value={{
-      loadedModules, 
-      updateModules
+      enclave,
+      dispatchEnclave,
       }}>
       <div>
         <ul>
-        {loadedModules.map(mod => {
-          return (
-            <li key={mod.id}>
-              {mod.name}
-            </li>
-          );
-        })}
+          {enclave.loadedModules.map(mod => {
+            return (
+              <li key={mod.id}>
+                {mod.name}
+              </li>
+            );
+          })}
         </ul>
         <button type='button' id='module-adder'>
           +
@@ -43,8 +79,8 @@ export default function Enclave(): React.ReactNode {
         <input 
           type="text"
           id='module-adder-input' 
-          value={moduleAdderInput}
-          onChange={(e) => setModuleAdderInput(e.target.value)}
+          value={enclave.moduleAdderInput}
+          onChange={ (e) => dispatchEnclave({ type: DispatcherType.ModuleInput, payload: { data: e.target.value  } }) }
           placeholder=' Enter enclave name' 
         />
       </div>

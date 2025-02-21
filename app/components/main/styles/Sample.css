@@ -3,3 +3,11 @@
 body {
   @apply text-[#D39D55];
 }
+
+#module-adder {
+  @apply cursor-pointer text-3xl;
+}
+
+#module-adder-input {
+  @apply border-2 border-white;
+}

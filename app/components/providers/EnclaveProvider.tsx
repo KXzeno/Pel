@@ -2,39 +2,52 @@
 
 import React from 'react';
 
+import '../main/styles/Sample.css';
+
+  // TODO: Assign this to user data when auth is set up
+import { defaultData, type EnclaveData } from '@/utils/DefaultEnclaveData';
+
 type ContextData = {
   loadedModules: object;
-  updateModules: React.Dispatch<React.SetStateAction<object>>;
+  updateModules: React.Dispatch<React.SetStateAction<EnclaveData[]>>;
 }
+
 export const EnclaveContext: React.Context<ContextData> = React.createContext({
   loadedModules: {},
   // FIXME: Find better way of asserting Context type
-  updateModules: (() => null) as React.Dispatch<React.SetStateAction<object>>,
-   
+  updateModules: (() => null) as React.Dispatch<React.SetStateAction<EnclaveData[]>>,
 });
 
-export default function Enclave({ children }: { children: React.ReactNode }): React.ReactNode {
-  // TODO: Assign this to user data when auth is set up
-  const defaultData = {
-    E1: {
-      '1C1': {
-        data: {},
-        T1: { data:{}, },
-        '2C1:1': { data: {}, T1: { data: {}, }, T2: { data: {}, }, },
-        '2C2:1': { data:{}, T1: { data: {}, }, '3C1:2': { data: {}, }, },
-      }
-    }
-  }
-
-  const [loadedModules, updateModules] = React.useState<object>(defaultData);
-  updateModules
+export default function Enclave(): React.ReactNode {
+  const [loadedModules, updateModules] = React.useState<EnclaveData[]>(defaultData);
+  const [moduleAdderInput, setModuleAdderInput] = React.useState<string>('');
 
   return (
     <EnclaveContext.Provider value={{
       loadedModules, 
       updateModules
       }}>
-      { children }
+      <div>
+        <ul>
+        {loadedModules.map(mod => {
+          return (
+            <li key={mod.id}>
+              {mod.name}
+            </li>
+          );
+        })}
+        </ul>
+        <button type='button' id='module-adder'>
+          +
+        </button>
+        <input 
+          type="text"
+          id='module-adder-input' 
+          value={moduleAdderInput}
+          onChange={(e) => setModuleAdderInput(e.target.value)}
+          placeholder=' Enter enclave name' 
+        />
+      </div>
     </EnclaveContext.Provider>
   );
 }

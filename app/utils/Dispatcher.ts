@@ -51,3 +51,5 @@ export default interface Dispatcher<T> {
    */
   clear(): void;
 }
+
+export type AsyncFunction<T> = () => Promise<T>;

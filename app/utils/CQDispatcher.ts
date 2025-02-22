@@ -1,7 +1,8 @@
-import Dispatcher, { type ActiveCollection } from './Dispatcher';
+import Dispatcher, {
+  type ActiveCollection, 
+  type AsyncFunction 
+} from './Dispatcher';
 import CircularQueue from './CircularQueue';
-
-export type AsyncFunction<T> = () => Promise<T> ;
 
 /**
  * A circular-queue implementation of a promise dispatcher

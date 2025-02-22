@@ -1,13 +1,4 @@
-export interface EnclaveData {
-  id: `E${number}`;
-  name: string;
-  [index: `${number}C${number}` | `${number}C${number}:${number}`]: object;
-}
-
-interface DefaultData {
-  loadedModules: EnclaveData[];
-  moduleAdderInput: string;
-}
+import type { DefaultData } from "@main/types/Enclave.types";
 
 export const defaultData: DefaultData = { 
   loadedModules: [

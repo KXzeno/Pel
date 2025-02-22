@@ -54,4 +54,5 @@ export const defaultData: DefaultData = {
     },
   ],
   moduleAdderInput: '',
+  isInputVisible: false,
 };

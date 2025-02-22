@@ -21,7 +21,7 @@
     "baseUrl": "app/",
     "paths": {
       "@/*": ["./*"],
-      "@/Icons/*": ["./components/Icons/*"],
+      "@/icons/*": ["./components/forward/icons/*"],
       "@f": ["./components/forward/index.ts"],
       "@f/*": ["./components/forward/*"],
       "@main": ["./components/main/index.ts"],

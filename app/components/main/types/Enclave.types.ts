@@ -7,6 +7,7 @@ export interface EnclaveData {
 export interface DefaultData {
   loadedModules: EnclaveData[];
   moduleAdderInput: string;
+  isInputVisible: boolean;
 }
 
 export type ContextData = {
@@ -18,12 +19,13 @@ export type ContextData = {
 export interface ReducerState {
   loadedModules: EnclaveData[];
   moduleAdderInput: string;
+  isInputVisible: boolean;
 }
 
 export interface ReducerAction {
   type: DispatcherMode;
   payload?: {
-    data: string | EnclaveData;
+    data: string | EnclaveData | HTMLButtonElement;
   }
 }
 
@@ -31,4 +33,5 @@ export enum DispatcherMode {
   ModuleInput = 'INPUT',
   ModuleInputSubmit = 'INPUT_SUBMIT',
   ModuleUpdate = 'UPDATE',
+  ShowModuleInput = 'SHOW_MODULE_INPUT',
 }

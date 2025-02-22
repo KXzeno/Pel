@@ -3,51 +3,14 @@
 import React from 'react';
 
 import useObserver from '@hooks/useObserver';
-import CQDispatcher from '@/utils/CQDispatcher';
-
-type EvtDispatcher = CQDispatcher<string, Evt>;
-
-type Evt = Promise<string> | (() => Promise<string>);
-
-type ReducerState = {
-  controller: EvtDispatcher;
-}
-
-type ReducerAction = {
-  type: 'queue' | 'clear' | 'trigger' ;
-  payload?: {
-    evt: Promise<string> | (() => Promise<string>);
-  }
-}
-
-function evtReducer(state: ReducerState, action: ReducerAction) {
-  switch (action.type) {
-    case 'trigger': {
-      state.controller.dispatch();
-      return state;
-    }
-    case 'queue': {
-      if (action.payload == null) {
-        console.debug('No payload received.');
-        return { ...state };
-      }
-      const { evt } = action.payload;
-      if (evt instanceof Promise || evt instanceof Function) {
-        state.controller.append(evt);
-        if (!state.controller.active) {
-          state.controller.dispatch();
-        }
-      } else {
-        console.error('Not an event / promise.');
-      }
-      return state;
-    }
-    case 'clear': {
-      state.controller.clear();
-      return state;
-    }
-  }
-}
+import CQDispatcher from '@utils/core/CQDispatcher';
+import type {
+  EvtDispatcher,
+  Evt,
+  ReducerState,
+  ReducerAction
+} from '@main/types/Landing.types';
+import evtReducer from '@utils/auxil/evtReducer';
 
 export default function LandingHeader() {
   // Initialize reducer to persist dispatcher state

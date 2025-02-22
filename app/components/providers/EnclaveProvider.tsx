@@ -42,10 +42,6 @@ export default function Enclave(): React.ReactNode {
             );
           })}
         </ul>
-        <button type='button' id='module-adder'>
-          { /** TODO: Add active state and show input box when button pressed */ }
-          +
-        </button>
         { /** TODO: Create actions */ }
         <form 
           action="" 
@@ -60,7 +56,17 @@ export default function Enclave(): React.ReactNode {
             });
           }}
         >
-          <input 
+        <button 
+          type='button' 
+          id='module-adder'
+          onClick={(e) => dispatchEnclave({ 
+            type: DispatcherMode.ShowModuleInput,
+            payload: { data: e.target as HTMLButtonElement }
+          })}
+        >
+          +
+        </button>
+          {enclave.isInputVisible && <input 
             type="text"
             id='module-adder-input' 
             value={enclave.moduleAdderInput}
@@ -73,7 +79,7 @@ export default function Enclave(): React.ReactNode {
               });
             }}
             placeholder=' Enter enclave name' 
-          />
+          />}
         </form>
       </div>
     </EnclaveContext.Provider>

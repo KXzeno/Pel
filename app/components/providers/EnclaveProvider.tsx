@@ -14,6 +14,7 @@ import {
 import { defaultData } from '@utils/DefaultEnclaveData';
 import enclaveReducer from '@utils/auxil/enclaveReducer';
 
+// Create context w/ defaults
 export const EnclaveContext: React.Context<ContextData> = React.createContext({
   // Defaults
   enclave: {} as ReducerState,
@@ -21,6 +22,10 @@ export const EnclaveContext: React.Context<ContextData> = React.createContext({
 });
 
 
+/**
+ * Enclave RFC; fetches user's notes and provides 
+ * simple management for creating new enclave nodes
+ */
 export default function Enclave(): React.ReactNode {
   const [enclave, dispatchEnclave] = React.useReducer<ReducerState, [ReducerAction]>(enclaveReducer, defaultData);
 
@@ -31,9 +36,11 @@ export default function Enclave(): React.ReactNode {
       }}>
       <div>
         <ul className='flex flex-row'>
+          { /** Recursively create enclave nodes */ }
           {enclave.loadedModules.map(mod => {
             return (
               <li key={mod.id}>
+                { /** Wrap nodes with black hole effect */ }
                 <BlackHole id={mod.id}>
                   <p className='abs-center font-diphylleia -translate-y-10 text-nowrap'>{mod.name}</p>
                   <button type="button" className='w-5 h-5 border-2 border-violet-300/50 rounded-lg bg-violet-300/50 cursor-pointer' /> 
@@ -43,6 +50,7 @@ export default function Enclave(): React.ReactNode {
           })}
         </ul>
         { /** TODO: Create actions */ }
+        { /** Contains input value as form data */ }
         <form 
           action="" 
           method="post"
@@ -56,6 +64,7 @@ export default function Enclave(): React.ReactNode {
             });
           }}
         >
+          { /** Input box displayer & form sender */ }
         <button 
           type='button' 
           id='module-adder'
@@ -66,6 +75,7 @@ export default function Enclave(): React.ReactNode {
         >
           +
         </button>
+          {/** Only show input box on visible state */}
           {enclave.isInputVisible && <input 
             type="text"
             id='module-adder-input' 

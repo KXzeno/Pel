@@ -4,15 +4,15 @@ import React from 'react';
 
 import '../main/styles/Sample.css';
 import BlackHole from '../forward/BlackHole';
-
   // TODO: Assign this to user data when auth is set up
-import { defaultData, type EnclaveData } from '@/utils/DefaultEnclaveData';
-
-type ContextData = {
-  enclave: ReducerState;
-  dispatchEnclave: React.ActionDispatch<[ReducerAction]>;
-  
-}
+import { 
+  DispatcherMode,
+  type ContextData,
+  type ReducerState, 
+  type ReducerAction,
+} from '@main/types/Enclave.types';
+import { defaultData } from '@utils/DefaultEnclaveData';
+import enclaveReducer from '@utils/auxil/enclaveReducer';
 
 export const EnclaveContext: React.Context<ContextData> = React.createContext({
   // Defaults
@@ -20,66 +20,6 @@ export const EnclaveContext: React.Context<ContextData> = React.createContext({
   dispatchEnclave: (() => null) as React.ActionDispatch<[ReducerAction]>,
 });
 
-enum DispatcherType {
-  ModuleInput = 'INPUT',
-  ModuleInputSubmit = 'INPUT_SUBMIT',
-  ModuleUpdate = 'UPDATE',
-}
-
-interface ReducerState {
-  loadedModules: EnclaveData[];
-  moduleAdderInput: string;
-}
-
-interface ReducerAction {
-  type: DispatcherType;
-  payload?: {
-    data: string | EnclaveData;
-  }
-}
-
-function enclaveReducer(state: ReducerState, action: ReducerAction): ReducerState {
-  switch (action.type) {
-    case DispatcherType.ModuleInput: {
-      if (action.payload && action.payload.data) {
-        return {
-          ...state,
-          moduleAdderInput: action.payload.data as string,
-        }
-      }
-      return { ...state, moduleAdderInput: '' };
-    }
-    case DispatcherType.ModuleUpdate: {
-      // TODO: Implement module update logic when using database
-      console.info('Unfinished implementation.');
-      return { ...state };
-    }
-    case DispatcherType.ModuleInputSubmit: {
-      console.log(action.payload);
-      if (!action.payload) {
-        throw new Error('No input parsed.');
-      }
-
-      // TODO: Properly submissions
-      if ((action.payload.data as string).length === 0) {
-        return { ...state };
-      }
-
-      const { data: input } = action.payload;
-
-      const newModule: EnclaveData = { 
-        id: `E${state.loadedModules.length + 1}`,
-        name: input as string,
-      }
-
-      // TODO: Implement deletion logic
-      // Add deletion marker array to reclaim enclave ids,
-      // perhaps with bonus syntax that indicates reclaim
-
-      return { loadedModules: [...state.loadedModules, newModule], moduleAdderInput: '' };
-    }
-  }
-}
 
 export default function Enclave(): React.ReactNode {
   const [enclave, dispatchEnclave] = React.useReducer<ReducerState, [ReducerAction]>(enclaveReducer, defaultData);
@@ -103,6 +43,7 @@ export default function Enclave(): React.ReactNode {
           })}
         </ul>
         <button type='button' id='module-adder'>
+          { /** TODO: Add active state and show input box when button pressed */ }
           +
         </button>
         { /** TODO: Create actions */ }
@@ -112,7 +53,7 @@ export default function Enclave(): React.ReactNode {
           onSubmit={(e) => {
             e.preventDefault(); 
             dispatchEnclave({ 
-              type: DispatcherType.ModuleInputSubmit,
+              type: DispatcherMode.ModuleInputSubmit,
               payload: {
                 data: enclave.moduleAdderInput,
               }
@@ -125,7 +66,7 @@ export default function Enclave(): React.ReactNode {
             value={enclave.moduleAdderInput}
             onChange={ (e) => {
               dispatchEnclave({
-                type: DispatcherType.ModuleInput, 
+                type: DispatcherMode.ModuleInput, 
                 payload: {
                   data: e.target.value  
                 } 

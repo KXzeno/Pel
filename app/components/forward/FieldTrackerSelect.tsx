@@ -7,7 +7,7 @@ import {
   Conjuration, 
   Restoration, 
   Enchanting 
-} from '@/Icons/base';
+} from '@f/icons/base';
 
 export default function FieldTrackerSelect() {
   return (

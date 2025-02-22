@@ -1,5 +1,5 @@
-import LandingHeader from "./LandingHeader";
-import LandingNavBar from "./LandingNavBar";
+import LandingHeader from "./Landing/LandingHeader";
+import LandingNavBar from "./Landing/LandingNavBar";
 
 export { 
   LandingHeader,

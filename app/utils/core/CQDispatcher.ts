@@ -160,64 +160,121 @@ export default class CQDispatcher<T, P extends Promise<T> | AsyncFunction<T>> im
     }
   }
 
-  // TODO: Type predicate for function arguments
+  /**
+   * Type predicate for item to dispatch
+   *
+   * @param fn - a promise or a async function
+   */
   private isAsyncFunction(fn: Promise<T> | AsyncFunction<T> | null): fn is AsyncFunction<T> {
     return (fn as Promise<T>).then === undefined;
   }
 
+  /**
+   * Dispatches an async function argument
+   *
+   * @param evt - an async function to dispatch
+   * @returns a pending boolean indicating dispatch completion
+   */
   private async dispatchAsyncFunction(evt: AsyncFunction<T>): Promise<boolean> {
+    // Set active state
     this.active = true;
+
     evt().then(async () => {
+    // Attempt to dequeue for linear dispatch
       try {
         this.dq.dequeue();
       } catch (e) {
         // FIXME: Handle empty dequeue
         console.error(e);
       }
+      // Call items method to update active collection
       this.items();
       const { item } = this.dq.first();
+      // Recursively dispatch existing items
       if (item !== null && this.isAsyncFunction(item)) {
         await this.dispatchAsyncFunction(item);
       }
+      // Set inactive state when complete
       this.active = false;
     });
+    // Return the inverse as success indication
     return !(this.active)
   }
 
+  /**
+   * Dispatches a promise argument
+   *
+   * @param evt - the promise to dispatch
+   * @returns a pending boolean indicating dispatch completion
+   */
   private async dispatchPromise(evt: Promise<T>): Promise<boolean> {
+    // Set active state
     this.active = true;
     // Dispatch when leader is truthy
     evt.then(async () => {
+    // Attempt to dequeue for linear dispatch
       try {
         this.dq.dequeue();
       } catch (e) {
         // FIXME: Handle error
         console.error(e);
       }
+      // Call items method to update active collection
       this.items();
+      // Recursively dispatch existing items
       if (this.dq.first() !== null) {
         await this.dispatch();
       } 
+      // Set inactive state
       this.active = false;
     });
+    // Return the inverse as success indication
     return !(this.active);
   } 
 
-  public toArray() {
-    const arr = [];
+  /**
+   * Outputs the active collection as an array
+   *
+   * @returns an array of 
+   */
+  public toArray(): Array<P> | null {
+    const arr: Array<P> = [];
     const first = this.dq.first();
+
     let traverser: NonNullable<typeof first> | null = null;
+
     while (arr.length !== this.capacity()) {
+      // Check if traverser is initialized
       if (!traverser) {
+        // Check if first can be initialized to traverser, else null
+        if (!first || !first.item) {
+          return null;
+        }
         traverser = first;
         arr.push(first.item);
         continue;
       }
+      // Traverse through next node and push it's item after check
       traverser = traverser.next();
-      if (traverser) {
+      if (traverser && traverser.item) {
         arr.push(traverser.item);
       }
     }
+
+    // Deploy truthy predicate
+    if (this.isNonNullishArray(arr)) {
+      return null;
+    }
     return arr;
+  }
+
+  /**
+   * Type predicate for toArray method's return
+   *
+   * @param arr - an array of promise or async 
+   * function with potential nullish candidates
+   */
+  private isNonNullishArray(arr: Array<Promise<T> | AsyncFunction<T> | null>): arr is Array<P> {
+    return !arr.some(item => item === null);
   }
 }

@@ -10,8 +10,11 @@ export default function Sample() {
   const { enclave, dispatchEnclave } = React.useContext(EnclaveContext);
 
   React.useEffect(() => {
-    console.log(dispatchEnclave);
-  }, [dispatchEnclave]);
+    if (enclave.isInputVisible) {
+      const inputField = document.querySelector('#module-adder-input') as HTMLInputElement;
+      inputField.focus();
+    }
+  }, [enclave.isInputVisible]);
 
   return (
     <div>

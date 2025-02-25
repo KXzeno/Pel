@@ -9,13 +9,7 @@ export default function Page() {
     <div>
       <div className='relative mx-auto text-center w-62 translate-y-8'>
         <p>IN DEVELOPMENT</p>
-        <ul className='text-xs text-left'>
-          <li>- Adopt similar structure to <Link href='https://github.com/KXzeno/adk' className='text-blue-500 hover:text-blue-800'>ADK</Link> </li>
-          <li>- Input forms linking to database</li>
-          <li>- Highlight linked nodes when hovering</li>
-          <li>- Create dynamic route for each enclave node</li>
-          <li>- Remit node sorting; implement relationships / inner modules </li>
-        </ul>
+        <p className='text-xs'>To see the reflection of development, manually visit the <Link href='/test'><code className='text-purple-600 hover:text-violet-900'>/test</code></Link> route</p>
       </div>
       <div className='flex flex-row w-[95%] h-[80%] justify-self-center justify-center gap-7 mt-80'>
         <div>

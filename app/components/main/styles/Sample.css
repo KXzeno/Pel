@@ -11,3 +11,7 @@ body {
 #module-adder-input {
   @apply border-2 border-white;
 }
+
+form:has(button#module-adder) {
+  @apply flex justify-self-center mt-24;
+}

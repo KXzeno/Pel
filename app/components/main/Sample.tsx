@@ -1,45 +1,88 @@
 'use client';
 import React from 'react';
-import Link from 'next/link';
 
-import BlackHole from '@/components/forward/BlackHole';
+import BlackHole from '@f/BlackHole';
+import { EnclaveContext } from '@providers/EnclaveProvider';
+import { DispatcherMode } from '@main/types/Enclave.types';
 import './styles/Sample.css';
 
 export default function Sample() {
+  const { enclave, dispatchEnclave } = React.useContext(EnclaveContext);
+
+  React.useEffect(() => {
+    console.log(dispatchEnclave);
+  }, [dispatchEnclave]);
 
   return (
     <div>
-      <div className='relative mx-auto text-center w-62 translate-y-8'>
-        <p>IN DEVELOPMENT</p>
-        <ul className='text-xs text-left'>
-          <li>- Adopt similar structure to <Link href='https://github.com/KXzeno/adk' className='text-blue-500 hover:text-blue-800'>ADK</Link> </li>
-          <li>- Input forms linking to database</li>
-          <li>- Highlight linked nodes when hovering</li>
-          <li>- Create dynamic route for each enclave node</li>
-          <li>- Remit node sorting; implement relationships / inner modules </li>
-        </ul>
-      </div>
-      <div className='flex flex-row w-[95%] h-[80%] justify-self-center justify-center gap-7 mt-80'>
-        <div>
-          <BlackHole id='field'>
-            <p className='abs-center font-diphylleia -translate-y-10 text-nowrap'>Field</p>
-            <button type="button" className='w-5 h-5 border-2 border-violet-300/50 rounded-lg bg-violet-300/50 cursor-pointer' /> 
-          </BlackHole>
-        </div>
-        <div>
-          <BlackHole id='java'>
-            <p className='abs-center font-diphylleia -translate-y-10 text-nowrap'>Java</p>
-            <button type="button" className='w-5 h-5 border-2 border-violet-300/50 rounded-lg bg-violet-300/50 cursor-pointer' /> 
-          </BlackHole>
-        </div>
-        <div>
-          <BlackHole id='starcraft-2'>
-            <p className='abs-center font-diphylleia -translate-y-10 text-nowrap'>StarCraft II</p>
-            <button type="button" className='w-5 h-5 border-2 border-violet-300/50 rounded-lg bg-violet-300/50 cursor-pointer' /> 
-          </BlackHole>
-        </div>
-      </div>
+      <ul className='flex flex-row'>
+        { /** Recursively create enclave nodes */ }
+        {enclave.loadedModules && enclave.loadedModules.map(mod => {
+          return (
+            <li key={mod.id}>
+              { /** Wrap nodes with black hole effect */ }
+              <BlackHole id={mod.id}>
+                <p className='abs-center font-diphylleia -translate-y-10 text-nowrap'>{mod.name}</p>
+                <button type="button" className='w-5 h-5 border-2 border-violet-300/50 rounded-lg bg-violet-300/50 cursor-pointer' /> 
+              </BlackHole>
+            </li>
+          );
+        })}
+      </ul>
+      { /** TODO: Create actions */ }
+      { /** Contains input value as form data */ }
+      <form 
+        action="" 
+        method="post"
+        onSubmit={(e) => {
+          console.log('mhm');
+          e.preventDefault(); 
+          dispatchEnclave({ 
+            type: DispatcherMode.ModuleInputSubmit,
+            payload: {
+              data: enclave.moduleAdderInput,
+            }
+          });
+        }}
+      >
+        { /** Input box displayer & form sender */ }
+        <button 
+          type='button' 
+          id='module-adder'
+          onClick={(e) => dispatchEnclave({ 
+            type: DispatcherMode.ShowModuleInput,
+            payload: { data: e.target as HTMLButtonElement }
+          })}
+        >
+          +
+        </button>
+        {/** Only show input box on visible state */}
+        {enclave.isInputVisible && <input 
+          type="text"
+          id='module-adder-input' 
+          value={enclave.moduleAdderInput}
+          onChange={ (e) => {
+            dispatchEnclave({
+              type: DispatcherMode.ModuleInput, 
+              payload: {
+                data: e.target.value  
+              } 
+            });
+          }}
+          placeholder=' Enter enclave name' 
+          onKeyDown={(e: React.KeyboardEvent) => {
+            switch (e.key) {
+              case 'Enter': {
+                e.preventDefault();
+                const btn = (e.target as HTMLInputElement).previousElementSibling as HTMLButtonElement;
+                if (btn) {
+                  btn.click();
+                }
+              }
+            }
+          }}
+        />}
+      </form>
     </div>
   );
 }
-

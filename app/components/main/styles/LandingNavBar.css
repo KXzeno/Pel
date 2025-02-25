@@ -26,6 +26,10 @@
   @apply relative w-16;
 }
 
+.nav-item > a {
+ @apply hover:text-[#E89020];
+}
+
 #nav-ctr > div:nth-of-type(2):not(.merged) {
   @apply col-span-3 grid grid-cols-subgrid;
 }

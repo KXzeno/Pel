@@ -5,7 +5,7 @@ import React from 'react';
 import useObserver from '@hooks/useObserver';
 import CQDispatcher from '@utils/core/CQDispatcher';
 import type {
-  EvtDispatcher,
+  // EvtDispatcher,
   Evt,
   ReducerState,
   ReducerAction

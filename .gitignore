@@ -24,7 +24,6 @@
 .DS_Store
 *.pem
 __tests__/__snapshots__/*
-app/test/*
 
 # debug
 npm-debug.log*

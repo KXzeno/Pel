@@ -35,7 +35,6 @@ export default function Sample() {
         action="" 
         method="post"
         onSubmit={(e) => {
-          console.log('mhm');
           e.preventDefault(); 
           dispatchEnclave({ 
             type: DispatcherMode.ModuleInputSubmit,
@@ -81,6 +80,7 @@ export default function Sample() {
               }
             }
           }}
+          autoComplete='off'
         />}
       </form>
     </div>

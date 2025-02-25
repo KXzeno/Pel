@@ -127,8 +127,8 @@ export default class CQDispatcher<T, P extends Promise<T> | AsyncFunction<T>> im
    */
   public append(evt: P): number {
     if (this.active === true) {
-      if (this.isAsyncFunction(evt)) {
-        const qArr = this.toArray();
+      const qArr = this.toArray();
+      if (this.isAsyncFunction(evt) && qArr !== null) {
         const queued = Promise.all(qArr).then(() => evt())
         this.append(queued as P);
         this.items();

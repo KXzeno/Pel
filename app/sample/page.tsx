@@ -1,6 +1,8 @@
 import React from 'react';
+import Link from 'next/link';
 
 import BlackHole from '@/components/forward/BlackHole';
+import '../components/main/styles/Sample.css';
 
 export default function Page() {
   return (

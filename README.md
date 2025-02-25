@@ -6,10 +6,11 @@
 # Project Roadmap
 1. Design general UX/UI
 2. Create sort and query patterns using intuitive, categorical designs
-3. Implement dynamic timeline interface for notes/events
-4. Add presets for how timelines are constructed
-5. Implement priority inheritance via timeline node relationships
-6. Design algorithm for which nodes/timelines to notify the user of "worthy", immediate retrospection
-7. Implement cookie/session-based caching for guests
-8. Implement auth.js for database integration, allowing full features; follows a whitelist unless database options expand
-9. Produce external data encryption in case of data leaks
+3. Implement reasonable routing strategy for nodes; /E1 -> /E1/2C1 -> /E1/2C1/T2 where each code can instead be their unique identifiers. UIDs are only unique to their contexts
+4. Implement dynamic timeline interface for notes/events
+5. Add presets for how timelines are constructed
+6. Implement priority inheritance via timeline node relationships
+7. Design algorithm for which nodes/timelines to notify the user of "worthy", immediate retrospection
+8. Implement cookie/session-based caching for guests
+9. Implement auth.js for database integration, allowing full features; follows a whitelist unless database options expand
+10. Produce external data encryption in case of data leaks

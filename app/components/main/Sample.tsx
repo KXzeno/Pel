@@ -17,8 +17,8 @@ export default function Sample() {
   }, [enclave.isInputVisible]);
 
   return (
-    <div>
-      <ul className='flex flex-row'>
+    <div className='relative w-screen h-screen'>
+      <ul className='flex flex-wrap'>
         { /** Recursively create enclave nodes */ }
         {enclave.loadedModules && enclave.loadedModules.map(mod => {
           return (

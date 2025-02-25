@@ -46,10 +46,17 @@ export default function enclaveReducer(state: ReducerState, action: ReducerActio
       // Destructure input from payload
       const { data: input } = action.payload;
 
+      // Ensure name is unique
+      const isUnique = !state.loadedModules.some(item => item.name === input);
+
+      if (!isUnique) {
+        return { ...state, isInputVisible: false };
+      }
+
       // Create enclave data using input as its name
       const newModule: EnclaveData = { 
         id: `E${state.loadedModules.length + 1}`,
-        name: input as string,
+        name: input,
       }
 
       // TODO: Implement deletion logic
@@ -119,6 +126,6 @@ function isString(payload: ReducerAction['payload']): payload is { data: string 
  *
  * @param payload - the dispatcher payload
  */
-function isEnclaveData(payload: ReducerAction['payload']): payload is { data: EnclaveData } {
-  return payload ? Object.keys(payload.data)[0] === 'id' : false;
-}
+// function isEnclaveData(payload: ReducerAction['payload']): payload is { data: EnclaveData } {
+//   return payload ? Object.keys(payload.data)[0] === 'id' : false;
+// }
